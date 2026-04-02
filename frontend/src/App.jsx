@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import DentistDashboard from './pages/DentistDashboard';
 import Patients from './pages/Patients';
 import PatientForm from './pages/PatientForm';
 import Appointments from './pages/Appointments';
@@ -12,6 +13,7 @@ import Billing from './pages/Billing';
 import Settings from './pages/Settings';
 
 import PrivateRoute from './components/PrivateRoute';
+import RoleDashboard from './components/RoleDashboard';
 import Layout from './components/layout/Layout';
 
 function App() {
@@ -26,7 +28,7 @@ function App() {
               <Layout />
             </PrivateRoute>
           }>
-            <Route index element={<Dashboard />} />
+            <Route index element={<RoleDashboard />} />
             
             <Route path="patients" element={<Patients />} />
             <Route path="patients/new" element={<PatientForm />} />
@@ -35,10 +37,18 @@ function App() {
             
             <Route path="appointments" element={<Appointments />} />
             <Route path="treatments" element={<Treatments />} />
-            <Route path="billing" element={<Billing />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="billing" element={
+              <PrivateRoute roles={['admin', 'assistant']}>
+                <Billing />
+              </PrivateRoute>
+            } />
+            <Route path="settings" element={
+              <PrivateRoute roles={['admin']}>
+                <Settings />
+              </PrivateRoute>
+            } />
             
-            <Route path="*" element={<div>Page not found</div>} />
+            <Route path="*" element={<div className="flex items-center justify-center h-64 text-slate-400">Page not found</div>} />
           </Route>
         </Routes>
       </Router>

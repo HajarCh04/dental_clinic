@@ -6,7 +6,6 @@ const seedDatabase = async () => {
     await sequelize.authenticate();
     console.log('Database connected.');
 
-    // Sync all models (force: true will drop existing tables)
     await sequelize.sync({ force: true });
     console.log('Database synchronized.');
 
@@ -26,40 +25,53 @@ const seedDatabase = async () => {
       { first_name: 'Ali', last_name: 'Haddad', email: 'ali@mail.com', phone: '0634567890', dob: '1975-12-05', gender: 'Male', address: '8 Rue des Fleurs', medical_notes: 'None' },
       { first_name: 'Yasmine', last_name: 'Chadli', email: 'yasmine@mail.com', phone: '0645678901', dob: '2000-01-30', gender: 'Female', address: '55 Blvd Mohammed V', medical_notes: 'Diabetes Type 2' },
       { first_name: 'Omar', last_name: 'Rhiwi', email: 'omar@mail.com', phone: '0656789012', dob: '1995-11-15', gender: 'Male', address: '12 Cite Al Amal', medical_notes: 'None' },
+      { first_name: 'Nadia', last_name: 'Boumediene', email: 'nadia@mail.com', phone: '0667890123', dob: '1988-03-18', gender: 'Female', address: '22 Rue Ibn Sina', medical_notes: 'Hypertension' },
+      { first_name: 'Rachid', last_name: 'Amrani', email: 'rachid@mail.com', phone: '0678901234', dob: '1992-07-25', gender: 'Male', address: '15 Avenue Al Massira', medical_notes: 'None' },
+      { first_name: 'Samira', last_name: 'El Fassi', email: 'samira@mail.com', phone: '0689012345', dob: '1983-11-02', gender: 'Female', address: '8 Rue Moulay Ismail', medical_notes: 'Allergic to latex' },
     ]);
 
-    // Create Appointments
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
+    // Create Appointments across multiple days
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+    const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
+
+    const mkDate = (base, h, m) => { const d = new Date(base); d.setHours(h, m, 0, 0); return d; };
+
     const appointments = await Appointment.bulkCreate([
-      { patient_id: patients[0].id, dentist_id: dentist.id, title: 'Checkup', start_time: new Date(today.setHours(9, 0, 0)), end_time: new Date(today.setHours(9, 30, 0)), status: 'scheduled' },
-      { patient_id: patients[1].id, dentist_id: dentist.id, title: 'Cavity Filling', start_time: new Date(today.setHours(10, 0, 0)), end_time: new Date(today.setHours(11, 0, 0)), status: 'scheduled' },
-      { patient_id: patients[2].id, dentist_id: dentist.id, title: 'Root Canal', start_time: new Date(tomorrow.setHours(14, 0, 0)), end_time: new Date(tomorrow.setHours(15, 30, 0)), status: 'scheduled' },
-      { patient_id: patients[3].id, dentist_id: dentist.id, title: 'Teeth Whitening', start_time: new Date(today.setHours(15, 0, 0)), end_time: new Date(today.setHours(16, 0, 0)), status: 'completed' }
+      // Today
+      { patient_id: patients[0].id, dentist_id: dentist.id, title: 'Checkup', start_time: mkDate(today, 9, 0), end_time: mkDate(today, 9, 30), status: 'scheduled' },
+      { patient_id: patients[1].id, dentist_id: dentist.id, title: 'Cavity Filling', start_time: mkDate(today, 10, 0), end_time: mkDate(today, 11, 0), status: 'scheduled' },
+      { patient_id: patients[3].id, dentist_id: dentist.id, title: 'Teeth Whitening', start_time: mkDate(today, 14, 0), end_time: mkDate(today, 15, 0), status: 'completed' },
+      { patient_id: patients[5].id, dentist_id: dentist.id, title: 'Dental Cleaning', start_time: mkDate(today, 15, 30), end_time: mkDate(today, 16, 0), status: 'scheduled' },
+      // Yesterday
+      { patient_id: patients[4].id, dentist_id: dentist.id, title: 'Extraction', start_time: mkDate(yesterday, 9, 0), end_time: mkDate(yesterday, 10, 0), status: 'completed' },
+      { patient_id: patients[6].id, dentist_id: dentist.id, title: 'Crown Placement', start_time: mkDate(yesterday, 11, 0), end_time: mkDate(yesterday, 12, 30), status: 'completed' },
+      // Tomorrow
+      { patient_id: patients[2].id, dentist_id: dentist.id, title: 'Root Canal', start_time: mkDate(tomorrow, 14, 0), end_time: mkDate(tomorrow, 15, 30), status: 'scheduled' },
+      { patient_id: patients[7].id, dentist_id: dentist.id, title: 'Braces Consultation', start_time: mkDate(tomorrow, 10, 0), end_time: mkDate(tomorrow, 10, 30), status: 'scheduled' },
+      // Day after
+      { patient_id: patients[0].id, dentist_id: dentist.id, title: 'Follow-up Checkup', start_time: mkDate(dayAfter, 9, 0), end_time: mkDate(dayAfter, 9, 30), status: 'scheduled' },
     ]);
 
     // Create Treatments
-    const treatment1 = await Treatment.create({
-      patient_id: patients[3].id,
-      dentist_id: dentist.id,
-      appointment_id: appointments[3].id,
-      procedure_name: 'Teeth Whitening',
-      description: 'Standard laser teeth whitening procedure.',
-      cost: 1500.00,
-      date: new Date()
-    });
+    const treatments = await Treatment.bulkCreate([
+      { patient_id: patients[3].id, dentist_id: dentist.id, appointment_id: appointments[2].id, procedure_name: 'Teeth Whitening', description: 'Standard laser teeth whitening procedure.', cost: 1500.00, date: today },
+      { patient_id: patients[4].id, dentist_id: dentist.id, appointment_id: appointments[4].id, procedure_name: 'Tooth Extraction', description: 'Simple extraction of upper molar.', cost: 800.00, date: yesterday },
+      { patient_id: patients[6].id, dentist_id: dentist.id, appointment_id: appointments[5].id, procedure_name: 'Crown Placement', description: 'Porcelain crown fitted on lower premolar.', cost: 3500.00, date: yesterday },
+      { patient_id: patients[0].id, dentist_id: dentist.id, appointment_id: null, procedure_name: 'Dental Cleaning', description: 'Standard scaling and polishing.', cost: 500.00, date: new Date(today.getTime() - 7 * 86400000) },
+      { patient_id: patients[1].id, dentist_id: dentist.id, appointment_id: null, procedure_name: 'Composite Filling', description: 'Tooth-colored composite filling on lower molar.', cost: 1200.00, date: new Date(today.getTime() - 14 * 86400000) },
+    ]);
 
     // Create Invoices
-    await Invoice.create({
-      patient_id: patients[3].id,
-      treatment_id: treatment1.id,
-      amount: 1500.00,
-      paid_amount: 500.00,
-      status: 'partial',
-      due_date: new Date(tomorrow.setDate(tomorrow.getDate() + 30))
-    });
+    await Invoice.bulkCreate([
+      { patient_id: patients[3].id, treatment_id: treatments[0].id, amount: 1500.00, paid_amount: 500.00, status: 'partial', due_date: new Date(today.getTime() + 30 * 86400000), issued_date: today },
+      { patient_id: patients[4].id, treatment_id: treatments[1].id, amount: 800.00, paid_amount: 800.00, status: 'paid', due_date: yesterday, issued_date: yesterday },
+      { patient_id: patients[6].id, treatment_id: treatments[2].id, amount: 3500.00, paid_amount: 0.00, status: 'unpaid', due_date: new Date(today.getTime() + 15 * 86400000), issued_date: yesterday },
+      { patient_id: patients[0].id, treatment_id: treatments[3].id, amount: 500.00, paid_amount: 500.00, status: 'paid', due_date: new Date(today.getTime() - 7 * 86400000), issued_date: new Date(today.getTime() - 7 * 86400000) },
+      { patient_id: patients[1].id, treatment_id: treatments[4].id, amount: 1200.00, paid_amount: 600.00, status: 'partial', due_date: new Date(today.getTime() + 7 * 86400000), issued_date: new Date(today.getTime() - 14 * 86400000) },
+    ]);
 
     console.log('Mock data seeded successfully!');
     process.exit(0);
