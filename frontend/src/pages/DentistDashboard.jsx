@@ -118,7 +118,7 @@ const DentistDashboard = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-semibold text-slate-800">{appt.title}</p>
-                      <p className="text-sm text-slate-500 mt-0.5">
+                      <p onClick={() => navigate(`/patients/${appt.patient_id}`)} className="text-sm text-primary-600 hover:text-primary-800 cursor-pointer mt-0.5">
                         {appt.patient?.first_name} {appt.patient?.last_name}
                         {appt.patient?.phone && <span className="text-slate-400"> · {appt.patient.phone}</span>}
                       </p>
@@ -159,7 +159,7 @@ const DentistDashboard = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="font-medium text-slate-800 text-sm">{t.procedure_name}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{t.patient?.first_name} {t.patient?.last_name}</p>
+                    <p onClick={() => navigate(`/patients/${t.patient_id}`)} className="text-xs text-primary-600 hover:text-primary-800 cursor-pointer mt-0.5">{t.patient?.first_name} {t.patient?.last_name}</p>
                   </div>
                   <p className="text-sm font-bold text-teal-600">${Number(t.cost).toLocaleString()}</p>
                 </div>

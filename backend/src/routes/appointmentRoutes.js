@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getAppointments, createAppointment, updateAppointment, deleteAppointment } = require('../controllers/appointmentController');
+const { getAppointments, getUpcomingAppointments, createAppointment, updateAppointment, deleteAppointment } = require('../controllers/appointmentController');
 const { protect } = require('../middleware/authMiddleware');
 
 router.route('/')
   .get(protect, getAppointments)
   .post(protect, createAppointment);
+
+router.route('/upcoming')
+  .get(protect, getUpcomingAppointments);
 
 router.route('/:id')
   .put(protect, updateAppointment)

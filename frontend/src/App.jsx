@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import DentistDashboard from './pages/DentistDashboard';
 import Patients from './pages/Patients';
+import PatientProfile from './pages/PatientProfile';
 import PatientForm from './pages/PatientForm';
 import Appointments from './pages/Appointments';
 import Treatments from './pages/Treatments';
@@ -32,7 +33,7 @@ function App() {
             
             <Route path="patients" element={<Patients />} />
             <Route path="patients/new" element={<PatientForm />} />
-            <Route path="patients/:id" element={<PatientForm />} />
+            <Route path="patients/:id" element={<PatientProfile />} />
             <Route path="patients/edit/:id" element={<PatientForm />} />
             
             <Route path="appointments" element={<Appointments />} />

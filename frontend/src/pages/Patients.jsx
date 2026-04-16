@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { Search, UserPlus, Eye, Edit, Trash2 } from 'lucide-react';
+import { Search, UserPlus, Eye, Edit, Trash2, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { generatePatientsListPDF } from '../utils/pdfGenerator';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -43,17 +44,32 @@ const Patients = () => {
     }
   };
 
+  const handleDownloadDirectory = () => {
+    if (patients.length === 0) {
+      toast.error('No patients to export');
+      return;
+    }
+    generatePatientsListPDF(patients);
+    toast.success('Patients directory downloaded!');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold text-slate-800">Patient Management</h1>
-        <button 
-          onClick={() => navigate('/patients/new')}
-          className="btn-primary flex items-center gap-2"
-        >
-          <UserPlus size={18} />
-          <span>Add Patient</span>
-        </button>
+        <div className="flex gap-3">
+          <button onClick={handleDownloadDirectory} className="btn-secondary flex items-center gap-2">
+            <Download size={18} />
+            <span>Export PDF</span>
+          </button>
+          <button 
+            onClick={() => navigate('/patients/new')}
+            className="btn-primary flex items-center gap-2"
+          >
+            <UserPlus size={18} />
+            <span>Add Patient</span>
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-4 items-center bg-white p-4 rounded-xl shadow-soft border border-slate-100">

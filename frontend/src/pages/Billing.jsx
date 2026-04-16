@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-import { CreditCard, Search, DollarSign, Plus, Trash2 } from 'lucide-react';
+import { CreditCard, Search, DollarSign, Plus, Trash2, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Modal from '../components/ui/Modal';
+import { generateInvoicePDF } from '../utils/pdfGenerator';
 
 const Billing = () => {
   const [invoices, setInvoices] = useState([]);
@@ -94,6 +95,11 @@ const Billing = () => {
     }
   };
 
+  const handleDownloadInvoice = (inv) => {
+    generateInvoicePDF(inv);
+    toast.success('Invoice PDF downloaded!');
+  };
+
   const getStatusBadge = (status) => {
     const base = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ";
     switch (status) {
@@ -162,6 +168,9 @@ const Billing = () => {
                     <td className="px-6 py-4 text-sm text-slate-500">{new Date(inv.issued_date).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
+                        <button onClick={() => handleDownloadInvoice(inv)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Download Invoice PDF">
+                          <Download size={16} />
+                        </button>
                         {inv.status !== 'paid' && (
                           <button onClick={() => openPaymentModal(inv)} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Record Payment">
                             <DollarSign size={16} />

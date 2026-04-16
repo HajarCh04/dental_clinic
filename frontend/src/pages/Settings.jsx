@@ -1,14 +1,32 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Settings as SettingsIcon, User, Shield, Bell, HelpCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../services/api';
 
 const Settings = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
+  const [formData, setFormData] = useState({ name: '', email: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSaveProfile = (e) => {
+  useEffect(() => {
+    if (user) {
+      setFormData({ name: user.name || '', email: user.email || '' });
+    }
+  }, [user]);
+
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
-    toast.success('Profile settings updated successfully!');
+    setIsSubmitting(true);
+    try {
+      const res = await api.put('/auth/profile', formData);
+      setUser(prev => ({ ...prev, ...res.data }));
+      toast.success('Profile settings updated successfully!');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -46,7 +64,10 @@ const Settings = () => {
                 <div>
                   <label className="label-text">Full Name</label>
                   <input 
-                    type="text" defaultValue={user?.name || ''} 
+                    type="text" 
+                    value={formData.name} 
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    required
                     className="input-field" 
                   />
                 </div>
@@ -61,13 +82,16 @@ const Settings = () => {
               <div>
                 <label className="label-text">Email Address</label>
                 <input 
-                  type="email" defaultValue={user?.email || ''} 
+                  type="email" 
+                  value={formData.email} 
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  required
                   className="input-field" 
                 />
               </div>
               <div className="pt-4 flex justify-end">
-                <button type="submit" className="btn-primary px-8">
-                  Update Profile
+                <button type="submit" disabled={isSubmitting} className="btn-primary px-8">
+                  {isSubmitting ? 'Updating...' : 'Update Profile'}
                 </button>
               </div>
             </form>
