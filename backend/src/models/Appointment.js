@@ -35,6 +35,10 @@ const Appointment = sequelize.define('Appointment', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  location: {
+    type: DataTypes.ENUM('office', 'hospital'),
+    defaultValue: 'office',
+  },
 }, {
   timestamps: true,
   createdAt: 'created_at',

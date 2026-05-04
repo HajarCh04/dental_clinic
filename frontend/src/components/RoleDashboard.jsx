@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import Dashboard from '../pages/Dashboard';
+import AssistantDashboard from '../pages/AssistantDashboard';
 import DentistDashboard from '../pages/DentistDashboard';
 
 const RoleDashboard = () => {
@@ -10,8 +10,8 @@ const RoleDashboard = () => {
     return <DentistDashboard />;
   }
 
-  // Admin and assistant see the admin dashboard
-  return <Dashboard />;
+  // Assistant (and any other role) sees the assistant dashboard
+  return <AssistantDashboard />;
 };
 
 export default RoleDashboard;

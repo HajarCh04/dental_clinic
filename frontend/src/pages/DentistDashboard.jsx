@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
-import { Stethoscope, Clock, CheckCircle, Users, ArrowRight, Activity } from 'lucide-react';
+import { Stethoscope, Clock, CheckCircle, Users, ArrowRight, Activity, Calendar, Building2, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const DentistDashboard = () => {
@@ -45,8 +45,9 @@ const DentistDashboard = () => {
             <p className="text-teal-100 text-sm font-medium">Good {new Date().getHours() < 12 ? 'Morning' : 'Afternoon'},</p>
             <h1 className="text-2xl font-bold mt-1">{user?.name || 'Doctor'}</h1>
             <p className="text-teal-100 text-sm mt-2">
-              You have <span className="font-bold text-white">{stats?.todayTotal || 0}</span> appointments today
+              You have <span className="font-bold text-white">{stats?.todayTotal || 0}</span> office appointments today
               {stats?.completedToday > 0 && <>, <span className="font-bold text-white">{stats.completedToday}</span> completed</>}
+              {stats?.hospitalOpsThisWeek > 0 && <> · <span className="font-bold text-white">{stats.hospitalOpsThisWeek}</span> hospital ops this week</>}
             </p>
           </div>
           <div className="flex gap-3">
@@ -58,13 +59,13 @@ const DentistDashboard = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         <div className="card p-5 flex items-center border-l-4 border-teal-400">
           <div className="p-3 rounded-xl bg-teal-50 text-teal-600 mr-4">
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Today's Schedule</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Office Today</p>
             <h3 className="text-2xl font-bold text-slate-800">{stats?.todayTotal || 0}</h3>
           </div>
         </div>
@@ -73,7 +74,7 @@ const DentistDashboard = () => {
             <CheckCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Completed Today</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Completed</p>
             <h3 className="text-2xl font-bold text-slate-800">{stats?.completedToday || 0}</h3>
           </div>
         </div>
@@ -86,16 +87,25 @@ const DentistDashboard = () => {
             <h3 className="text-2xl font-bold text-slate-800">{stats?.myPatientCount || 0}</h3>
           </div>
         </div>
+        <div className="card p-5 flex items-center border-l-4 border-rose-400">
+          <div className="p-3 rounded-xl bg-rose-50 text-rose-600 mr-4">
+            <Building2 className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Hospital Ops</p>
+            <h3 className="text-2xl font-bold text-slate-800">{stats?.hospitalOpsThisWeek || 0}</h3>
+          </div>
+        </div>
       </div>
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Today's Schedule Timeline */}
+        {/* Today's Office Schedule Timeline */}
         <div className="card p-6 lg:col-span-2">
           <div className="flex justify-between items-center mb-5">
             <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
               <Stethoscope className="w-5 h-5 text-teal-600" />
-              Today's Schedule
+              Today's Office Schedule
             </h3>
             <button onClick={() => navigate('/appointments')} className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1 font-medium">
               Full Calendar <ArrowRight size={14} />
@@ -104,14 +114,12 @@ const DentistDashboard = () => {
           <div className="space-y-1">
             {stats?.myTodayAppointments?.length > 0 ? stats.myTodayAppointments.map((appt, idx) => (
               <div key={appt.id} className="flex gap-4 group">
-                {/* Timeline dot & line */}
                 <div className="flex flex-col items-center">
                   <div className={`w-3 h-3 rounded-full mt-2 ${
                     appt.status === 'completed' ? 'bg-emerald-500' : 'bg-teal-500 ring-4 ring-teal-100'
                   }`} />
                   {idx < stats.myTodayAppointments.length - 1 && <div className="w-0.5 flex-1 bg-slate-200 my-1" />}
                 </div>
-                {/* Content */}
                 <div className={`flex-1 p-4 rounded-xl mb-2 transition-colors ${
                   appt.status === 'completed' ? 'bg-emerald-50/50' : 'bg-slate-50 group-hover:bg-teal-50/50'
                 }`}>
@@ -127,11 +135,10 @@ const DentistDashboard = () => {
                       <p className="text-sm font-medium text-slate-600">
                         {getTimeString(appt.start_time)} - {getTimeString(appt.end_time)}
                       </p>
-                      <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        appt.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                        appt.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                        'bg-teal-100 text-teal-700'
-                      }`}>{appt.status}</span>
+                      <div className="flex items-center gap-1 justify-end mt-1">
+                        <MapPin size={10} className="text-teal-500" />
+                        <span className="text-[10px] text-teal-600 font-semibold uppercase">Office</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -139,42 +146,86 @@ const DentistDashboard = () => {
             )) : (
               <div className="text-center py-12 text-slate-400">
                 <Calendar className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p>No appointments scheduled for today</p>
+                <p>No office appointments today</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Recent Treatments */}
-        <div className="card p-6">
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="text-lg font-semibold text-slate-800">Recent Treatments</h3>
-            <button onClick={() => navigate('/treatments')} className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1 font-medium">
-              View All <ArrowRight size={14} />
-            </button>
-          </div>
-          <div className="space-y-3">
-            {stats?.myRecentTreatments?.length > 0 ? stats.myRecentTreatments.map((t) => (
-              <div key={t.id} className="p-3 rounded-xl bg-slate-50 hover:bg-teal-50/50 transition-colors">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium text-slate-800 text-sm">{t.procedure_name}</p>
-                    <p onClick={() => navigate(`/patients/${t.patient_id}`)} className="text-xs text-primary-600 hover:text-primary-800 cursor-pointer mt-0.5">{t.patient?.first_name} {t.patient?.last_name}</p>
+        {/* Right Column: Hospital Ops + Recent Treatments */}
+        <div className="space-y-6">
+          {/* Hospital Operations */}
+          <div className="card p-6 border-l-4 border-rose-300">
+            <div className="flex justify-between items-center mb-5">
+              <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-rose-500" />
+                Hospital Operations
+              </h3>
+            </div>
+            <div className="space-y-3">
+              {stats?.hospitalOps?.length > 0 ? stats.hospitalOps.map((op) => (
+                <div key={op.id} className="p-3 rounded-xl bg-rose-50/50 border border-rose-100 hover:border-rose-200 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold text-slate-800 text-sm">{op.title}</p>
+                      <p 
+                        onClick={() => navigate(`/patients/${op.patient_id}`)} 
+                        className="text-xs text-rose-600 hover:text-rose-800 cursor-pointer mt-0.5"
+                      >
+                        {op.patient?.first_name} {op.patient?.last_name}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-medium text-slate-600">
+                        {new Date(op.start_time).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                      </p>
+                      <p className="text-[10px] text-slate-500">
+                        {getTimeString(op.start_time)} - {getTimeString(op.end_time)}
+                      </p>
+                      <div className="flex items-center gap-1 justify-end mt-1">
+                        <Building2 size={10} className="text-rose-500" />
+                        <span className="text-[10px] text-rose-600 font-semibold uppercase">Hospital</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-sm font-bold text-teal-600">${Number(t.cost).toLocaleString()}</p>
                 </div>
-              </div>
-            )) : (
-              <p className="text-sm text-slate-400 text-center py-8">No treatments yet</p>
-            )}
+              )) : (
+                <div className="text-center py-8 text-slate-400">
+                  <Building2 className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm">No upcoming hospital operations</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Recent Treatments */}
+          <div className="card p-6">
+            <div className="flex justify-between items-center mb-5">
+              <h3 className="text-lg font-semibold text-slate-800">Recent Treatments</h3>
+              <button onClick={() => navigate('/treatments')} className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1 font-medium">
+                View All <ArrowRight size={14} />
+              </button>
+            </div>
+            <div className="space-y-3">
+              {stats?.myRecentTreatments?.length > 0 ? stats.myRecentTreatments.map((t) => (
+                <div key={t.id} className="p-3 rounded-xl bg-slate-50 hover:bg-teal-50/50 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-medium text-slate-800 text-sm">{t.procedure_name}</p>
+                      <p onClick={() => navigate(`/patients/${t.patient_id}`)} className="text-xs text-primary-600 hover:text-primary-800 cursor-pointer mt-0.5">{t.patient?.first_name} {t.patient?.last_name}</p>
+                    </div>
+                    <p className="text-sm font-bold text-teal-600">${Number(t.cost).toLocaleString()}</p>
+                  </div>
+                </div>
+              )) : (
+                <p className="text-sm text-slate-400 text-center py-8">No treatments yet</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-// Need Calendar for the empty state icon
-import { Calendar } from 'lucide-react';
 
 export default DentistDashboard;

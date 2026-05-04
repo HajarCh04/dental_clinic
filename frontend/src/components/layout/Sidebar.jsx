@@ -24,12 +24,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   ];
 
   // Only admin and assistant see Billing
-  if (user?.role === 'admin' || user?.role === 'assistant') {
+  if (user?.role === 'assistant') {
     navItems.push({ name: 'Billing', path: '/billing', icon: <CreditCard className="w-5 h-5" /> });
   }
 
-  // Only admin sees Settings
-  if (user?.role === 'admin') {
+  // Assistant sees Settings (manages the office)
+  if (user?.role === 'assistant') {
     navItems.push({ name: 'Settings', path: '/settings', icon: <Settings className="w-5 h-5" /> });
   }
 

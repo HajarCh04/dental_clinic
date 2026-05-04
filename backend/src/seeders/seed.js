@@ -9,14 +9,12 @@ const seedDatabase = async () => {
     await sequelize.sync({ force: true });
     console.log('Database synchronized.');
 
-    // Create Users
-    const adminPassword = await bcrypt.hash('admin123', 10);
-    const dentistPassword = await bcrypt.hash('dentist123', 10);
+    // Create Users — only assistant and dentist roles
     const assistantPassword = await bcrypt.hash('assistant123', 10);
+    const dentistPassword = await bcrypt.hash('dentist123', 10);
 
-    const admin = await User.create({ name: 'Admin Boss', email: 'admin@clinic.com', password_hash: adminPassword, role: 'admin' });
-    const dentist = await User.create({ name: 'Dr. Karim', email: 'karim@clinic.com', password_hash: dentistPassword, role: 'dentist' });
-    const assistant = await User.create({ name: 'Sarah', email: 'sarah@clinic.com', password_hash: assistantPassword, role: 'assistant' });
+    const assistant = await User.create({ name: 'Sarah Benchekroun', email: 'sarah@clinic.com', password_hash: assistantPassword, role: 'assistant' });
+    const dentist = await User.create({ name: 'Dr. Karim Amrani', email: 'karim@clinic.com', password_hash: dentistPassword, role: 'dentist' });
 
     // Create Patients (Arabic/French names)
     const patients = await Patient.bulkCreate([
@@ -36,23 +34,29 @@ const seedDatabase = async () => {
     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
     const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
     const dayAfter = new Date(today); dayAfter.setDate(today.getDate() + 2);
+    const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 5);
 
     const mkDate = (base, h, m) => { const d = new Date(base); d.setHours(h, m, 0, 0); return d; };
 
     const appointments = await Appointment.bulkCreate([
-      // Today
-      { patient_id: patients[0].id, dentist_id: dentist.id, title: 'Checkup', start_time: mkDate(today, 9, 0), end_time: mkDate(today, 9, 30), status: 'scheduled' },
-      { patient_id: patients[1].id, dentist_id: dentist.id, title: 'Cavity Filling', start_time: mkDate(today, 10, 0), end_time: mkDate(today, 11, 0), status: 'scheduled' },
-      { patient_id: patients[3].id, dentist_id: dentist.id, title: 'Teeth Whitening', start_time: mkDate(today, 14, 0), end_time: mkDate(today, 15, 0), status: 'completed' },
-      { patient_id: patients[5].id, dentist_id: dentist.id, title: 'Dental Cleaning', start_time: mkDate(today, 15, 30), end_time: mkDate(today, 16, 0), status: 'scheduled' },
-      // Yesterday
-      { patient_id: patients[4].id, dentist_id: dentist.id, title: 'Extraction', start_time: mkDate(yesterday, 9, 0), end_time: mkDate(yesterday, 10, 0), status: 'completed' },
-      { patient_id: patients[6].id, dentist_id: dentist.id, title: 'Crown Placement', start_time: mkDate(yesterday, 11, 0), end_time: mkDate(yesterday, 12, 30), status: 'completed' },
-      // Tomorrow
-      { patient_id: patients[2].id, dentist_id: dentist.id, title: 'Root Canal', start_time: mkDate(tomorrow, 14, 0), end_time: mkDate(tomorrow, 15, 30), status: 'scheduled' },
-      { patient_id: patients[7].id, dentist_id: dentist.id, title: 'Braces Consultation', start_time: mkDate(tomorrow, 10, 0), end_time: mkDate(tomorrow, 10, 30), status: 'scheduled' },
-      // Day after
-      { patient_id: patients[0].id, dentist_id: dentist.id, title: 'Follow-up Checkup', start_time: mkDate(dayAfter, 9, 0), end_time: mkDate(dayAfter, 9, 30), status: 'scheduled' },
+      // Today — Office appointments
+      { patient_id: patients[0].id, dentist_id: dentist.id, title: 'Checkup', start_time: mkDate(today, 9, 0), end_time: mkDate(today, 9, 30), status: 'scheduled', location: 'office' },
+      { patient_id: patients[1].id, dentist_id: dentist.id, title: 'Cavity Filling', start_time: mkDate(today, 10, 0), end_time: mkDate(today, 11, 0), status: 'scheduled', location: 'office' },
+      { patient_id: patients[3].id, dentist_id: dentist.id, title: 'Teeth Whitening', start_time: mkDate(today, 14, 0), end_time: mkDate(today, 15, 0), status: 'completed', location: 'office' },
+      { patient_id: patients[5].id, dentist_id: dentist.id, title: 'Dental Cleaning', start_time: mkDate(today, 15, 30), end_time: mkDate(today, 16, 0), status: 'scheduled', location: 'office' },
+      // Yesterday — Completed
+      { patient_id: patients[4].id, dentist_id: dentist.id, title: 'Extraction', start_time: mkDate(yesterday, 9, 0), end_time: mkDate(yesterday, 10, 0), status: 'completed', location: 'office' },
+      { patient_id: patients[6].id, dentist_id: dentist.id, title: 'Crown Placement', start_time: mkDate(yesterday, 11, 0), end_time: mkDate(yesterday, 12, 30), status: 'completed', location: 'office' },
+      // Tomorrow — Office
+      { patient_id: patients[2].id, dentist_id: dentist.id, title: 'Root Canal', start_time: mkDate(tomorrow, 14, 0), end_time: mkDate(tomorrow, 15, 30), status: 'scheduled', location: 'office' },
+      { patient_id: patients[7].id, dentist_id: dentist.id, title: 'Braces Consultation', start_time: mkDate(tomorrow, 10, 0), end_time: mkDate(tomorrow, 10, 30), status: 'scheduled', location: 'office' },
+      // Day after — Office
+      { patient_id: patients[0].id, dentist_id: dentist.id, title: 'Follow-up Checkup', start_time: mkDate(dayAfter, 9, 0), end_time: mkDate(dayAfter, 9, 30), status: 'scheduled', location: 'office' },
+      
+      // HOSPITAL OPERATIONS
+      { patient_id: patients[2].id, dentist_id: dentist.id, title: 'Jaw Surgery', start_time: mkDate(tomorrow, 8, 0), end_time: mkDate(tomorrow, 12, 0), status: 'scheduled', location: 'hospital', notes: 'CHU Mohammed VI - Operating Room 3' },
+      { patient_id: patients[5].id, dentist_id: dentist.id, title: 'Impacted Wisdom Tooth Removal', start_time: mkDate(dayAfter, 7, 30), end_time: mkDate(dayAfter, 10, 0), status: 'scheduled', location: 'hospital', notes: 'Hospital Al Farabi - General anesthesia required' },
+      { patient_id: patients[4].id, dentist_id: dentist.id, title: 'Dental Implant Surgery', start_time: mkDate(nextWeek, 9, 0), end_time: mkDate(nextWeek, 13, 0), status: 'scheduled', location: 'hospital', notes: 'Clinique Al Hayat - Prep Room B' },
     ]);
 
     // Create Treatments
@@ -74,6 +78,10 @@ const seedDatabase = async () => {
     ]);
 
     console.log('Mock data seeded successfully!');
+    console.log('');
+    console.log('Login credentials:');
+    console.log('  Assistant: sarah@clinic.com / assistant123');
+    console.log('  Dentist:   karim@clinic.com / dentist123');
     process.exit(0);
 
   } catch (error) {

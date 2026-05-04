@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import AssistantDashboard from './pages/AssistantDashboard';
 import DentistDashboard from './pages/DentistDashboard';
 import Patients from './pages/Patients';
 import PatientProfile from './pages/PatientProfile';
@@ -39,12 +39,12 @@ function App() {
             <Route path="appointments" element={<Appointments />} />
             <Route path="treatments" element={<Treatments />} />
             <Route path="billing" element={
-              <PrivateRoute roles={['admin', 'assistant']}>
+              <PrivateRoute roles={['assistant']}>
                 <Billing />
               </PrivateRoute>
             } />
             <Route path="settings" element={
-              <PrivateRoute roles={['admin']}>
+              <PrivateRoute roles={['assistant']}>
                 <Settings />
               </PrivateRoute>
             } />

@@ -21,7 +21,7 @@ const Appointments = () => {
   const [editingAppt, setEditingAppt] = useState(null);
   const { user } = useContext(AuthContext);
 
-  const emptyForm = { patient_id: '', dentist_id: '', title: '', start_time: '', end_time: '', status: 'scheduled', notes: '' };
+  const emptyForm = { patient_id: '', dentist_id: '', title: '', start_time: '', end_time: '', status: 'scheduled', notes: '', location: 'office' };
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
@@ -70,7 +70,8 @@ const Appointments = () => {
       start_time: appt.start_time?.slice(0, 16),
       end_time: appt.end_time?.slice(0, 16),
       status: appt.status,
-      notes: appt.notes || ''
+      notes: appt.notes || '',
+      location: appt.location || 'office'
     });
     setShowModal(true);
   };
@@ -120,6 +121,11 @@ const Appointments = () => {
     if (event.resource.status === 'completed') style.backgroundColor = '#10b981';
     else if (event.resource.status === 'cancelled') style.backgroundColor = '#ef4444';
     else if (event.resource.status === 'no-show') style.backgroundColor = '#f59e0b';
+    // Hospital ops get a rose/red accent
+    if (event.resource.location === 'hospital') {
+      style.backgroundColor = event.resource.status === 'completed' ? '#10b981' : '#e11d48';
+      style.borderLeft = '3px solid #881337';
+    }
     return { style };
   };
 
@@ -188,6 +194,13 @@ const Appointments = () => {
                 <option value="completed">Completed</option>
                 <option value="cancelled">Cancelled</option>
                 <option value="no-show">No Show</option>
+              </select>
+            </div>
+            <div>
+              <label className="label-text">Location</label>
+              <select name="location" className="input-field" value={form.location} onChange={handleChange}>
+                <option value="office">🏥 Office</option>
+                <option value="hospital">🏨 Hospital</option>
               </select>
             </div>
           </div>
