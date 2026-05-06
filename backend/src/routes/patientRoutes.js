@@ -5,11 +5,11 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.route('/')
   .get(protect, getPatients)
-  .post(protect, authorize('admin', 'assistant'), createPatient);
+  .post(protect, authorize('assistant'), createPatient);
 
 router.route('/:id')
   .get(protect, getPatientById)
-  .put(protect, authorize('admin', 'assistant'), updatePatient)
-  .delete(protect, authorize('admin'), deletePatient);
+  .put(protect, authorize('assistant'), updatePatient)
+  .delete(protect, authorize('assistant'), deletePatient);
 
 module.exports = router;

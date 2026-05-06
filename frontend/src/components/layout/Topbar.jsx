@@ -20,7 +20,7 @@ const Topbar = ({ setSidebarOpen }) => {
           <Menu className="h-6 w-6" />
         </button>
         <h2 className="text-xl font-semibold text-slate-800 hidden sm:block">
-          Bienvenue, {user?.name?.split(' ')[0] || 'Utilisateur'} 👋
+          Bienvenue 👋
         </h2>
       </div>
 

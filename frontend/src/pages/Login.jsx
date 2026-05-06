@@ -73,8 +73,8 @@ const Login = () => {
           </div>
 
           <div className="mt-4 text-center text-sm text-slate-500 space-y-1">
-            <p>Assistante : sarah@clinic.com / assistant123</p>
-            <p>Dentiste : karim@clinic.com / dentist123</p>
+            <p>Assistante : assistant@clinic.com / assistant123</p>
+            <p>Dentiste : dentist@clinic.com / dentist123</p>
           </div>
         </form>
       </div>

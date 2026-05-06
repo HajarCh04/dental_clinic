@@ -13,8 +13,8 @@ const seedDatabase = async () => {
     const assistantPassword = await bcrypt.hash('assistant123', 10);
     const dentistPassword = await bcrypt.hash('dentist123', 10);
 
-    const assistant = await User.create({ name: 'Sarah Benchekroun', email: 'sarah@clinic.com', password_hash: assistantPassword, role: 'assistant' });
-    const dentist = await User.create({ name: 'Dr. Karim Amrani', email: 'karim@clinic.com', password_hash: dentistPassword, role: 'dentist' });
+    const assistant = await User.create({ name: 'Assistante', email: 'assistant@clinic.com', password_hash: assistantPassword, role: 'assistant' });
+    const dentist = await User.create({ name: 'Dentiste', email: 'dentist@clinic.com', password_hash: dentistPassword, role: 'dentist' });
 
     // Create Patients (Arabic/French names)
     const patients = await Patient.bulkCreate([
@@ -80,8 +80,8 @@ const seedDatabase = async () => {
     console.log('Mock data seeded successfully!');
     console.log('');
     console.log('Login credentials:');
-    console.log('  Assistant: sarah@clinic.com / assistant123');
-    console.log('  Dentist:   karim@clinic.com / dentist123');
+    console.log('  Assistant: assistant@clinic.com / assistant123');
+    console.log('  Dentist:   dentist@clinic.com / dentist123');
     process.exit(0);
 
   } catch (error) {
