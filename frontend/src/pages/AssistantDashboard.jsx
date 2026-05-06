@@ -36,16 +36,16 @@ const AssistantDashboard = () => {
     return (
       <div className="h-full flex flex-col items-center justify-center space-y-4">
         <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-        <div className="text-slate-500 font-medium animate-pulse">Loading office dashboard...</div>
+        <div className="text-slate-500 font-medium animate-pulse">Chargement du tableau de bord...</div>
       </div>
     );
   }
 
   const statCards = [
     { title: 'Total Patients', value: data?.totalPatients || 0, icon: <Users className="w-6 h-6" />, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' },
-    { title: "Today's Appointments", value: data?.todayAppointments || 0, icon: <Calendar className="w-6 h-6" />, color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-200' },
-    { title: 'Pending Invoices', value: data?.pendingInvoices || 0, icon: <AlertCircle className="w-6 h-6" />, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
-    { title: 'Upcoming (7 days)', value: data?.upcomingCount || 0, icon: <Clock className="w-6 h-6" />, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200' },
+    { title: "Rendez-vous aujourd'hui", value: data?.todayAppointments || 0, icon: <Calendar className="w-6 h-6" />, color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-200' },
+    { title: 'Factures impayées', value: data?.pendingInvoices || 0, icon: <AlertCircle className="w-6 h-6" />, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
+    { title: 'À venir (7 jours)', value: data?.upcomingCount || 0, icon: <Clock className="w-6 h-6" />, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200' },
   ];
 
   const filteredPatients = data?.patientSummaries?.filter(p =>
@@ -64,22 +64,22 @@ const AssistantDashboard = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
-      {/* Header */}
+      {/* En-tête */}
       <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex justify-between items-start">
           <div>
-            <p className="text-indigo-200 text-sm font-medium">Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'},</p>
-            <h1 className="text-2xl font-bold mt-1">{user?.name || 'Assistant'}</h1>
+            <p className="text-indigo-200 text-sm font-medium">{new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'},</p>
+            <h1 className="text-2xl font-bold mt-1">{user?.name || 'Assistante'}</h1>
             <p className="text-indigo-200 text-sm mt-2">
-              Office overview · <span className="font-bold text-white">{data?.todayAppointments || 0}</span> appointments today
+              Vue du cabinet · <span className="font-bold text-white">{data?.todayAppointments || 0}</span> rendez-vous aujourd'hui
             </p>
           </div>
           <div className="flex gap-3">
             <button onClick={() => navigate('/patients/new')} className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
-              <Users size={16} className="inline mr-1" /> New Patient
+              <Users size={16} className="inline mr-1" /> Nouveau patient
             </button>
             <button onClick={() => navigate('/appointments')} className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
-              <Calendar size={16} className="inline mr-1" /> Schedule
+              <Calendar size={16} className="inline mr-1" /> Agenda
             </button>
           </div>
         </div>
@@ -103,14 +103,14 @@ const AssistantDashboard = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-        {/* Today's Schedule - Left side */}
+        {/* Planning du jour — colonne gauche */}
         <div className="lg:col-span-2 card p-6">
           <div className="flex justify-between items-center mb-5 border-b border-slate-100 pb-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <ClipboardList className="w-5 h-5 text-indigo-500" /> Today's Schedule
+              <ClipboardList className="w-5 h-5 text-indigo-500" /> Planning du jour
             </h3>
             <button onClick={() => navigate('/appointments')} className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1 font-medium">
-              Full View <ArrowRight size={14} />
+              Vue complète <ArrowRight size={14} />
             </button>
           </div>
           <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
@@ -143,7 +143,7 @@ const AssistantDashboard = () => {
                         appt.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
                         appt.status === 'cancelled' ? 'bg-red-100 text-red-700' :
                         'bg-indigo-100 text-indigo-700'
-                      }`}>{appt.status}</span>
+                      }`}>{appt.status === 'completed' ? 'Terminé' : appt.status === 'cancelled' ? 'Annulé' : appt.status === 'no-show' ? 'Absent' : 'Planifié'}</span>
                     </div>
                   </div>
                 </div>
@@ -151,17 +151,17 @@ const AssistantDashboard = () => {
             )) : (
               <div className="text-center py-12 text-slate-400">
                 <Calendar className="w-10 h-10 mx-auto mb-2 text-slate-300" />
-                <p className="text-sm">No appointments scheduled today</p>
+                <p className="text-sm">Aucun rendez-vous prévu aujourd'hui</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Patient Directory + History - Right side */}
+        {/* Répertoire des patients + Historique — colonne droite */}
         <div className="lg:col-span-3 card p-6">
           <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <UserCheck className="w-5 h-5 text-violet-500" /> Patient Directory
+              <UserCheck className="w-5 h-5 text-violet-500" /> Répertoire des patients
             </h3>
             <div className="flex gap-2">
               <button 
@@ -172,22 +172,22 @@ const AssistantDashboard = () => {
                   }
                 }}
                 className="text-sm text-slate-500 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
-                title="Export patient directory"
+                title="Exporter le répertoire des patients"
               >
                 <Download size={16} />
               </button>
               <button onClick={() => navigate('/patients')} className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1 font-medium">
-                Manage <ArrowRight size={14} />
+                Gérer <ArrowRight size={14} />
               </button>
             </div>
           </div>
           
-          {/* Search */}
+          {/* Recherche */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input 
               type="text" 
-              placeholder="Search patients by name, phone or email..." 
+              placeholder="Rechercher un patient par nom, téléphone ou email..." 
               className="input-field pl-10 text-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -216,14 +216,14 @@ const AssistantDashboard = () => {
                     {/* Quick summary badges */}
                     <div className="hidden sm:flex items-center gap-2">
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100">
-                        {patient.totalVisits} visits
+                        {patient.totalVisits} visites
                       </span>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-50 text-violet-600 border border-violet-100">
-                        {patient.totalTreatments} treatments
+                        {patient.totalTreatments} traitements
                       </span>
                       {patient.hasOutstanding && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-600 border border-red-100">
-                          unpaid
+                          impayé
                         </span>
                       )}
                     </div>
@@ -231,7 +231,7 @@ const AssistantDashboard = () => {
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigate(`/patients/${patient.id}`); }}
                         className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                        title="View profile"
+                        title="Voir le profil"
                       >
                         <Eye size={14} />
                       </button>
@@ -240,87 +240,87 @@ const AssistantDashboard = () => {
                   </div>
                 </div>
 
-                {/* Expanded History Panel */}
+                {/* Panneau historique déroulant */}
                 {expandedPatient === patient.id && (
                   <div className="border-t border-slate-100 bg-slate-50/50 p-4 space-y-4 animate-in">
                     <div className="flex justify-between items-center">
-                      <h4 className="text-sm font-bold text-slate-700">Patient History</h4>
+                      <h4 className="text-sm font-bold text-slate-700">Historique du patient</h4>
                       <button onClick={() => setExpandedPatient(null)} className="text-slate-400 hover:text-slate-600">
                         <X size={14} />
                       </button>
                     </div>
 
-                    {/* Summary Stats */}
+                    {/* Résumé chiffré */}
                     <div className="grid grid-cols-3 gap-3">
                       <div className="bg-white rounded-lg p-3 border border-slate-100 text-center">
                         <p className="text-lg font-bold text-indigo-600">{patient.completedVisits}</p>
-                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Completed Visits</p>
+                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Visites terminées</p>
                       </div>
                       <div className="bg-white rounded-lg p-3 border border-slate-100 text-center">
-                        <p className="text-lg font-bold text-violet-600">${patient.totalBilled.toLocaleString()}</p>
-                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Total Billed</p>
+                        <p className="text-lg font-bold text-violet-600">{patient.totalBilled.toLocaleString('fr-FR')} DH</p>
+                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Total facturé</p>
                       </div>
                       <div className="bg-white rounded-lg p-3 border border-slate-100 text-center">
-                        <p className="text-lg font-bold text-emerald-600">${patient.totalPaid.toLocaleString()}</p>
-                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Total Paid</p>
+                        <p className="text-lg font-bold text-emerald-600">{patient.totalPaid.toLocaleString('fr-FR')} DH</p>
+                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Total payé</p>
                       </div>
                     </div>
 
-                    {/* Last Treatment */}
+                    {/* Dernier traitement */}
                     {patient.lastTreatment && (
                       <div className="bg-white rounded-lg p-3 border border-slate-100">
-                        <p className="text-[10px] text-slate-400 uppercase font-semibold mb-1">Last Treatment</p>
+                        <p className="text-[10px] text-slate-400 uppercase font-semibold mb-1">Dernier traitement</p>
                         <p className="text-sm font-medium text-slate-800">{patient.lastTreatment}</p>
-                        <p className="text-xs text-slate-500">{patient.lastTreatmentDate ? new Date(patient.lastTreatmentDate).toLocaleDateString() : ''}</p>
+                        <p className="text-xs text-slate-500">{patient.lastTreatmentDate ? new Date(patient.lastTreatmentDate).toLocaleDateString('fr-FR') : ''}</p>
                       </div>
                     )}
 
-                    {/* Past Appointments */}
+                    {/* Historique rendez-vous */}
                     {patient.appointments?.length > 0 && (
                       <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase mb-2">Appointment History</p>
+                        <p className="text-xs font-bold text-slate-500 uppercase mb-2">Historique des rendez-vous</p>
                         <div className="space-y-1.5 max-h-32 overflow-y-auto">
                           {patient.appointments.sort((a, b) => new Date(b.start_time) - new Date(a.start_time)).slice(0, 5).map(appt => (
                             <div key={appt.id} className="flex justify-between items-center bg-white rounded-lg p-2 border border-slate-100 text-xs">
                               <div>
                                 <span className="font-medium text-slate-700">{appt.title}</span>
-                                <span className="text-slate-400 ml-2">{new Date(appt.start_time).toLocaleDateString()}</span>
+                                <span className="text-slate-400 ml-2">{new Date(appt.start_time).toLocaleDateString('fr-FR')}</span>
                               </div>
                               <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase ${
                                 appt.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
                                 appt.status === 'cancelled' ? 'bg-red-100 text-red-700' :
                                 'bg-blue-100 text-blue-700'
-                              }`}>{appt.status}</span>
+                              }`}>{appt.status === 'completed' ? 'Terminé' : appt.status === 'cancelled' ? 'Annulé' : 'Planifié'}</span>
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
 
-                    {/* Treatments */}
+                    {/* Traitements */}
                     {patient.treatments?.length > 0 && (
                       <div>
-                        <p className="text-xs font-bold text-slate-500 uppercase mb-2">Treatments Performed</p>
+                        <p className="text-xs font-bold text-slate-500 uppercase mb-2">Traitements effectués</p>
                         <div className="space-y-1.5 max-h-32 overflow-y-auto">
                           {patient.treatments.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5).map(t => (
                             <div key={t.id} className="flex justify-between items-center bg-white rounded-lg p-2 border border-slate-100 text-xs">
                               <div>
                                 <span className="font-medium text-slate-700">{t.procedure_name}</span>
-                                <span className="text-slate-400 ml-2">{new Date(t.date).toLocaleDateString()}</span>
+                                <span className="text-slate-400 ml-2">{new Date(t.date).toLocaleDateString('fr-FR')}</span>
                               </div>
-                              <span className="font-bold text-violet-600">${Number(t.cost).toLocaleString()}</span>
+                              <span className="font-bold text-violet-600">{Number(t.cost).toLocaleString('fr-FR')} DH</span>
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
 
-                    {/* Quick action */}
+                    {/* Action rapide */}
                     <button 
                       onClick={() => navigate(`/patients/${patient.id}`)}
                       className="w-full py-2 text-center text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
-                      <Eye size={14} /> View Full Profile
+                      <Eye size={14} /> Voir le profil complet
                     </button>
                   </div>
                 )}
@@ -328,7 +328,7 @@ const AssistantDashboard = () => {
             )) : (
               <div className="text-center py-12 text-slate-400">
                 <Users className="w-10 h-10 mx-auto mb-2 text-slate-300" />
-                <p className="text-sm">No patients found</p>
+                <p className="text-sm">Aucun patient trouvé</p>
               </div>
             )}
           </div>

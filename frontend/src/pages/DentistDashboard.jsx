@@ -27,7 +27,7 @@ const DentistDashboard = () => {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="animate-pulse text-slate-400">Loading your schedule...</div>
+        <div className="animate-pulse text-slate-400">Chargement de votre agenda...</div>
       </div>
     );
   }
@@ -38,22 +38,19 @@ const DentistDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with teal accent */}
+      {/* En-tête avec accent sarcelle */}
       <div className="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex justify-between items-start">
           <div>
-            <p className="text-teal-100 text-sm font-medium">Good {new Date().getHours() < 12 ? 'Morning' : 'Afternoon'},</p>
-            <h1 className="text-2xl font-bold mt-1">{user?.name || 'Doctor'}</h1>
+            <p className="text-teal-100 text-sm font-medium">{new Date().getHours() < 12 ? 'Bonjour' : 'Bon après-midi'},</p>
+            <h1 className="text-2xl font-bold mt-1">{user?.name || 'Docteur'}</h1>
             <p className="text-teal-100 text-sm mt-2">
-              You have <span className="font-bold text-white">{stats?.todayTotal || 0}</span> office appointments today
-              {stats?.completedToday > 0 && <>, <span className="font-bold text-white">{stats.completedToday}</span> completed</>}
-              {stats?.hospitalOpsThisWeek > 0 && <> · <span className="font-bold text-white">{stats.hospitalOpsThisWeek}</span> hospital ops this week</>}
+              Vous avez <span className="font-bold text-white">{stats?.todayTotal || 0}</span> rendez-vous au cabinet aujourd'hui
+              {stats?.completedToday > 0 && <>, <span className="font-bold text-white">{stats.completedToday}</span> terminés</>}
+              {stats?.hospitalOpsThisWeek > 0 && <> · <span className="font-bold text-white">{stats.hospitalOpsThisWeek}</span> op. hospitalières cette semaine</>}
             </p>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => navigate('/treatments')} className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm">
-              <Activity size={16} className="inline mr-1" /> Add Treatment
-            </button>
           </div>
         </div>
       </div>
@@ -65,7 +62,7 @@ const DentistDashboard = () => {
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Office Today</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Cabinet aujourd'hui</p>
             <h3 className="text-2xl font-bold text-slate-800">{stats?.todayTotal || 0}</h3>
           </div>
         </div>
@@ -74,7 +71,7 @@ const DentistDashboard = () => {
             <CheckCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Completed</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Terminés</p>
             <h3 className="text-2xl font-bold text-slate-800">{stats?.completedToday || 0}</h3>
           </div>
         </div>
@@ -83,7 +80,7 @@ const DentistDashboard = () => {
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">My Patients</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Mes patients</p>
             <h3 className="text-2xl font-bold text-slate-800">{stats?.myPatientCount || 0}</h3>
           </div>
         </div>
@@ -92,7 +89,7 @@ const DentistDashboard = () => {
             <Building2 className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Hospital Ops</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Op. Hospitalières</p>
             <h3 className="text-2xl font-bold text-slate-800">{stats?.hospitalOpsThisWeek || 0}</h3>
           </div>
         </div>
@@ -105,10 +102,10 @@ const DentistDashboard = () => {
           <div className="flex justify-between items-center mb-5">
             <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
               <Stethoscope className="w-5 h-5 text-teal-600" />
-              Today's Office Schedule
+              Planning du cabinet (aujourd'hui)
             </h3>
             <button onClick={() => navigate('/appointments')} className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1 font-medium">
-              Full Calendar <ArrowRight size={14} />
+              Agenda complet <ArrowRight size={14} />
             </button>
           </div>
           <div className="space-y-1">
@@ -137,7 +134,7 @@ const DentistDashboard = () => {
                       </p>
                       <div className="flex items-center gap-1 justify-end mt-1">
                         <MapPin size={10} className="text-teal-500" />
-                        <span className="text-[10px] text-teal-600 font-semibold uppercase">Office</span>
+                        <span className="text-[10px] text-teal-600 font-semibold uppercase">Cabinet</span>
                       </div>
                     </div>
                   </div>
@@ -146,7 +143,7 @@ const DentistDashboard = () => {
             )) : (
               <div className="text-center py-12 text-slate-400">
                 <Calendar className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p>No office appointments today</p>
+                <p>Aucun rendez-vous au cabinet aujourd'hui</p>
               </div>
             )}
           </div>
@@ -159,7 +156,7 @@ const DentistDashboard = () => {
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-rose-500" />
-                Hospital Operations
+                Opérations Hospitalières
               </h3>
             </div>
             <div className="space-y-3">
@@ -184,7 +181,7 @@ const DentistDashboard = () => {
                       </p>
                       <div className="flex items-center gap-1 justify-end mt-1">
                         <Building2 size={10} className="text-rose-500" />
-                        <span className="text-[10px] text-rose-600 font-semibold uppercase">Hospital</span>
+                        <span className="text-[10px] text-rose-600 font-semibold uppercase">Hôpital</span>
                       </div>
                     </div>
                   </div>
@@ -192,7 +189,7 @@ const DentistDashboard = () => {
               )) : (
                 <div className="text-center py-8 text-slate-400">
                   <Building2 className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                  <p className="text-sm">No upcoming hospital operations</p>
+                  <p className="text-sm">Aucune opération hospitalière à venir</p>
                 </div>
               )}
             </div>
@@ -201,9 +198,9 @@ const DentistDashboard = () => {
           {/* Recent Treatments */}
           <div className="card p-6">
             <div className="flex justify-between items-center mb-5">
-              <h3 className="text-lg font-semibold text-slate-800">Recent Treatments</h3>
+              <h3 className="text-lg font-semibold text-slate-800">Traitements récents</h3>
               <button onClick={() => navigate('/treatments')} className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1 font-medium">
-                View All <ArrowRight size={14} />
+                Voir tout <ArrowRight size={14} />
               </button>
             </div>
             <div className="space-y-3">
@@ -218,7 +215,7 @@ const DentistDashboard = () => {
                   </div>
                 </div>
               )) : (
-                <p className="text-sm text-slate-400 text-center py-8">No treatments yet</p>
+                <p className="text-sm text-slate-400 text-center py-8">Aucun traitement récent</p>
               )}
             </div>
           </div>

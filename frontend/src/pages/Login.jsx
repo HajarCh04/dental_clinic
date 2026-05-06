@@ -16,7 +16,7 @@ const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to login');
+      setError(err.response?.data?.message || 'Échec de la connexion. Vérifiez vos identifiants.');
     }
   };
 
@@ -25,13 +25,13 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-card border border-slate-100">
         <div>
           <h2 className="mt-2 text-center text-3xl font-extrabold text-slate-900">
-            Dental Clinic
+            Cabinet Dentaire
           </h2>
           <p className="mt-2 text-center text-sm text-slate-500">
-            Sign in to access your dashboard
+            Connectez-vous pour accéder à votre tableau de bord
           </p>
         </div>
-        
+
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4">
             <p className="text-sm text-red-700">{error}</p>
@@ -41,19 +41,19 @@ const Login = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="label-text" htmlFor="email">Email address</label>
+              <label className="label-text" htmlFor="email">Adresse email</label>
               <input
                 id="email"
                 type="email"
                 required
                 className="input-field"
-                placeholder="dentist@clinic.com"
+                placeholder="email@cabinet.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label className="label-text" htmlFor="password">Password</label>
+              <label className="label-text" htmlFor="password">Mot de passe</label>
               <input
                 id="password"
                 type="password"
@@ -68,13 +68,13 @@ const Login = () => {
 
           <div>
             <button type="submit" className="w-full btn-primary py-3 text-lg">
-              Sign In
+              Se connecter
             </button>
           </div>
-          
-          <div className="mt-4 text-center text-sm text-slate-500">
-            <p>Admin: admin@clinic.com / admin123</p>
-            <p>Dentist: karim@clinic.com / dentist123</p>
+
+          <div className="mt-4 text-center text-sm text-slate-500 space-y-1">
+            <p>Assistante : sarah@clinic.com / assistant123</p>
+            <p>Dentiste : karim@clinic.com / dentist123</p>
           </div>
         </form>
       </div>

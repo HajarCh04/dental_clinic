@@ -87,9 +87,8 @@ npm run dev
 
 | Role | Email | Password |
 | :--- | :--- | :--- |
-| **Admin** | `admin@clinic.com` | `admin123` |
 | **Dentist** | `karim@clinic.com` | `dentist123` |
-| **Assistant** | `sarah@clinic.com` | `assistant123` |
+| **Assistant** | `assistant@cliniccom` | `assistant123` |
 
 ---
 
