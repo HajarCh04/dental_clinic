@@ -10,7 +10,13 @@ import toast from 'react-hot-toast';
 import Modal from '../components/ui/Modal';
 
 const locales = { 'fr': fr };
-const localizer = dateFnsLocalizer({ format, parse, startOfWeek: () => startOfWeek(new Date(), { locale: fr }), getDay, locales });
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek: (date) => startOfWeek(date, { weekStartsOn: 1 }),
+  getDay,
+  locales,
+});
 
 const Appointments = () => {
   const [events, setEvents] = useState([]);

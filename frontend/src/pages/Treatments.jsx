@@ -14,14 +14,16 @@ const Treatments = () => {
   const [editing, setEditing] = useState(null);
   const { user } = useContext(AuthContext);
 
-  const isAssistant = user?.role === 'assistant';
+  // Both assistant and dentist can manage treatments
+  // (dentist performs procedures, assistant records admin details)
+  const canManage = true;
 
   const emptyForm = { patient_id: '', dentist_id: '', procedure_name: '', description: '', cost: '', date: '', notes: '' };
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
     fetchTreatments();
-    if (isAssistant) fetchPatients();
+    fetchPatients();
   }, []);
 
   const fetchTreatments = async () => {
@@ -106,7 +108,7 @@ const Treatments = () => {
           <Activity className="text-primary-600" />
           <span>Suivi des Traitements</span>
         </h1>
-        {isAssistant && (
+        {canManage && (
           <button onClick={openCreate} className="btn-primary flex items-center gap-2">
             <Plus size={18} />
             <span>Nouveau Traitement</span>
@@ -131,14 +133,14 @@ const Treatments = () => {
                 <th className="px-6 py-4 text-sm font-semibold text-slate-600">Date</th>
                 <th className="px-6 py-4 text-sm font-semibold text-slate-600">Coût</th>
                 <th className="px-6 py-4 text-sm font-semibold text-slate-600">Dentiste</th>
-                {isAssistant && <th className="px-6 py-4 text-sm font-semibold text-slate-600 text-right">Actions</th>}
+                <th className="px-6 py-4 text-sm font-semibold text-slate-600 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr><td colSpan={isAssistant ? 6 : 5} className="px-6 py-10 text-center text-slate-500">Chargement des traitements...</td></tr>
+                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500">Chargement des traitements...</td></tr>
               ) : filteredTreatments.length === 0 ? (
-                <tr><td colSpan={isAssistant ? 6 : 5} className="px-6 py-10 text-center text-slate-500">Aucun traitement trouvé.</td></tr>
+                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500">Aucun traitement trouvé.</td></tr>
               ) : (
                 filteredTreatments.map((treatment) => (
                   <tr key={treatment.id} className="hover:bg-slate-50/50 transition-colors">
@@ -152,18 +154,16 @@ const Treatments = () => {
                     <td className="px-6 py-4 text-sm text-slate-600">{new Date(treatment.date).toLocaleDateString('fr-FR')}</td>
                     <td className="px-6 py-4 font-bold text-primary-600">{Number(treatment.cost).toLocaleString('fr-FR')} DH</td>
                     <td className="px-6 py-4 text-sm text-slate-600">{treatment.dentist?.name}</td>
-                    {isAssistant && (
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button onClick={() => openEdit(treatment)} className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
-                            <Edit size={16} />
-                          </button>
-                          <button onClick={() => handleDelete(treatment.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    )}
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => openEdit(treatment)} className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
+                          <Edit size={16} />
+                        </button>
+                        <button onClick={() => handleDelete(treatment.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
@@ -172,8 +172,8 @@ const Treatments = () => {
         </div>
       </div>
 
-      {/* Modale Création/Modification — Assistant uniquement */}
-      {isAssistant && (
+      {/* Modale Création/Modification — Les deux rôles peuvent gérer les traitements */}
+      {canManage && (
         <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editing ? 'Modifier le traitement' : 'Nouveau traitement'} size="lg">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

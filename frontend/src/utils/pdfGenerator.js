@@ -116,7 +116,7 @@ export const generatePatientReport = (patient) => {
           new Date(t.date).toLocaleDateString(),
           t.procedure_name,
           t.description || '-',
-          `$${Number(t.cost).toLocaleString()}`
+          `${Number(t.cost).toLocaleString('fr-FR')} DH`
         ]),
       styles: { fontSize: 9, cellPadding: 3 },
       headStyles: { fillColor: [30, 64, 175], textColor: 255, fontStyle: 'bold' },
@@ -179,7 +179,7 @@ export const generateInvoicePDF = (invoice) => {
     startY: y,
     head: [['Description', 'Amount']],
     body: [
-      [invoice.treatment?.procedure_name || 'Dental Service', `$${Number(invoice.amount).toLocaleString()}`],
+      [invoice.treatment?.procedure_name || 'Acte Dentaire', `${Number(invoice.amount).toLocaleString('fr-FR')} DH`],
     ],
     styles: { fontSize: 10, cellPadding: 5 },
     headStyles: { fillColor: [30, 64, 175], textColor: 255, fontStyle: 'bold' },
@@ -204,14 +204,14 @@ export const generateInvoicePDF = (invoice) => {
 
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(30, 41, 59);
-  doc.text(`$${Number(invoice.amount).toLocaleString()}`, 190, y + 10, { align: 'right' });
+  doc.text(`${Number(invoice.amount).toLocaleString('fr-FR')} DH`, 190, y + 10, { align: 'right' });
 
   doc.setTextColor(16, 185, 129);
-  doc.text(`$${Number(invoice.paid_amount).toLocaleString()}`, 190, y + 20, { align: 'right' });
+  doc.text(`${Number(invoice.paid_amount).toLocaleString('fr-FR')} DH`, 190, y + 20, { align: 'right' });
 
   const balance = Number(invoice.amount) - Number(invoice.paid_amount);
-  doc.setTextColor(balance > 0 ? [239, 68, 68] : [16, 185, 129]);
-  doc.text(`$${balance.toLocaleString()}`, 190, y + 30, { align: 'right' });
+  doc.setTextColor(...(balance > 0 ? [239, 68, 68] : [16, 185, 129]));
+  doc.text(`${balance.toLocaleString('fr-FR')} DH`, 190, y + 30, { align: 'right' });
 
   y += 50;
 
@@ -276,9 +276,9 @@ export const generateRevenueReport = (stats, analytics) => {
 
   // Key metrics boxes
   const metrics = [
-    { label: 'Total Revenue', value: `$${Number(stats?.totalRevenue || 0).toLocaleString()}` },
+    { label: 'Revenu Total', value: `${Number(stats?.totalRevenue || 0).toLocaleString('fr-FR')} DH` },
     { label: 'Total Patients', value: String(stats?.totalPatients || 0) },
-    { label: 'Pending Invoices', value: String(stats?.pendingInvoices || 0) },
+    { label: 'Factures impayées', value: String(stats?.pendingInvoices || 0) },
   ];
 
   metrics.forEach((m, i) => {
@@ -307,8 +307,8 @@ export const generateRevenueReport = (stats, analytics) => {
 
     autoTable(doc, {
       startY: y,
-      head: [['Month', 'Revenue']],
-      body: analytics.revenueTrend.map(r => [r.name, `$${Number(r.revenue).toLocaleString()}`]),
+      head: [['Mois', 'Revenu']],
+      body: analytics.revenueTrend.map(r => [r.name, `${Number(r.revenue).toLocaleString('fr-FR')} DH`]),
       styles: { fontSize: 9, cellPadding: 4 },
       headStyles: { fillColor: [30, 64, 175], textColor: 255, fontStyle: 'bold' },
       alternateRowStyles: { fillColor: [248, 250, 252] },

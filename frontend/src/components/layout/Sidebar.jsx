@@ -83,10 +83,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </ul>
 
           <div className="p-4 border-t border-slate-100">
-            <div className="px-4 py-2 mb-2">
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Connecté en tant que</p>
-              <p className="text-sm font-medium text-slate-700">{roleLabel[user?.role] || user?.role}</p>
-            </div>
             <button
               onClick={handleLogout}
               className="flex items-center w-full px-4 py-3 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-600 transition-colors"

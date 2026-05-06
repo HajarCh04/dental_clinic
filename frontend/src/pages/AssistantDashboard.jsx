@@ -167,8 +167,20 @@ const AssistantDashboard = () => {
               <button 
                 onClick={() => {
                   if (data?.patientSummaries?.length > 0) {
-                    generatePatientsListPDF(data.patientSummaries);
-                    toast.success('Patient directory exported!');
+                    // Map patientSummaries to the flat structure generatePatientsListPDF expects
+                    const patients = data.patientSummaries.map(p => ({
+                      id: p.id,
+                      first_name: p.first_name,
+                      last_name: p.last_name,
+                      gender: p.gender,
+                      dob: p.dob,
+                      phone: p.phone,
+                      email: p.email,
+                    }));
+                    generatePatientsListPDF(patients);
+                    toast.success('Répertoire des patients exporté !');
+                  } else {
+                    toast.error('Aucun patient à exporter');
                   }
                 }}
                 className="text-sm text-slate-500 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
