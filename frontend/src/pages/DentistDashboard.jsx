@@ -1,27 +1,32 @@
 import { useState, useEffect, useContext } from 'react';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
-import { Stethoscope, Clock, CheckCircle, Users, ArrowRight, Activity, Calendar, Building2, MapPin } from 'lucide-react';
+import { Stethoscope, Clock, CheckCircle, Users, ArrowRight, Activity, Calendar, Building2, MapPin, Mail, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const DentistDashboard = () => {
   const [stats, setStats] = useState(null);
+  const [assistants, setAssistants] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
-        const res = await api.get('/dashboard/dentist-stats');
-        setStats(res.data);
+        const [statsRes, assistantsRes] = await Promise.all([
+          api.get('/dashboard/dentist-stats'),
+          api.get('/assistants')
+        ]);
+        setStats(statsRes.data);
+        setAssistants(assistantsRes.data);
       } catch (error) {
-        console.error('Error fetching dentist stats', error);
+        console.error('Error fetching dentist dashboard data', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -144,6 +149,40 @@ const DentistDashboard = () => {
               <div className="text-center py-12 text-slate-400">
                 <Calendar className="w-12 h-12 mx-auto mb-3 text-slate-300" />
                 <p>Aucun rendez-vous au cabinet aujourd'hui</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mon Équipe (Assistantes) */}
+        <div className="card p-6 lg:col-span-2">
+          <div className="flex justify-between items-center mb-5">
+            <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <Users className="w-5 h-5 text-indigo-500" />
+              Mon Équipe (Assistantes)
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {assistants.length > 0 ? assistants.map((assistant) => (
+              <div key={assistant.id} className="p-4 rounded-xl border border-slate-100 hover:border-indigo-100 bg-white hover:shadow-sm transition-all flex items-start gap-4 group">
+                <div className="w-12 h-12 rounded-full border-2 border-indigo-100 flex items-center justify-center bg-indigo-50 text-indigo-600 font-bold text-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                  {assistant.name.charAt(0)}
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-800">{assistant.name}</h4>
+                  <div className="flex items-center gap-2 text-sm text-slate-500 mt-1">
+                    <Mail size={14} className="text-slate-400" />
+                    <span>{assistant.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-500 mt-1">
+                    <CheckCircle size={14} className="text-emerald-500" />
+                    <span className="text-emerald-600 font-medium text-xs">Accès Système Actif</span>
+                  </div>
+                </div>
+              </div>
+            )) : (
+              <div className="col-span-2 text-center py-8 text-slate-400">
+                <p>Aucune assistante n'est enregistrée dans le système.</p>
               </div>
             )}
           </div>

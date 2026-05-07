@@ -17,10 +17,10 @@ const getInvoices = async (req, res) => {
 
 const createInvoice = async (req, res) => {
   try {
-    const { patient_id, treatment_id, amount, paid_amount, status, due_date } = req.body;
+    const { patient_id, treatment_id, amount, paid_amount, status, due_date, estimated_reimbursement, reste_a_charge } = req.body;
     
     const invoice = await Invoice.create({
-      patient_id, treatment_id, amount, paid_amount, status, due_date
+      patient_id, treatment_id, amount, paid_amount, status, due_date, estimated_reimbursement, reste_a_charge
     });
     
     res.status(201).json(invoice);

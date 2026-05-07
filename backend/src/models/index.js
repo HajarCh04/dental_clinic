@@ -4,6 +4,7 @@ const Patient = require('./Patient');
 const Appointment = require('./Appointment');
 const Treatment = require('./Treatment');
 const Invoice = require('./Invoice');
+const Document = require('./Document');
 
 // User & Appointment Map
 User.hasMany(Appointment, { foreignKey: 'dentist_id', as: 'dentistAppointments' });
@@ -33,6 +34,10 @@ Invoice.belongsTo(Patient, { foreignKey: 'patient_id', as: 'patient' });
 Treatment.hasOne(Invoice, { foreignKey: 'treatment_id', as: 'invoice' });
 Invoice.belongsTo(Treatment, { foreignKey: 'treatment_id', as: 'treatment' });
 
+// Patient & Document
+Patient.hasMany(Document, { foreignKey: 'patient_id', as: 'documents' });
+Document.belongsTo(Patient, { foreignKey: 'patient_id', as: 'patient' });
+
 
 module.exports = {
   sequelize,
@@ -40,5 +45,6 @@ module.exports = {
   Patient,
   Appointment,
   Treatment,
-  Invoice
+  Invoice,
+  Document
 };

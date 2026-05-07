@@ -25,6 +25,8 @@ const Appointments = () => {
   const [dentists, setDentists] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingAppt, setEditingAppt] = useState(null);
+  const [date, setDate] = useState(new Date());
+  const [view, setView] = useState('week');
   const { user } = useContext(AuthContext);
 
   const isAssistant = user?.role === 'assistant';
@@ -179,10 +181,13 @@ const Appointments = () => {
               style={{ height: '100%' }}
               eventPropGetter={eventStyleGetter}
               views={['month', 'week', 'day']}
-              defaultView="week"
               messages={messages}
               culture="fr"
               onSelectEvent={isAssistant ? openEditModal : undefined}
+              date={date}
+              onNavigate={newDate => setDate(newDate)}
+              view={view}
+              onView={newView => setView(newView)}
             />
           </div>
         )}

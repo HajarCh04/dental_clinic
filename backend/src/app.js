@@ -11,11 +11,15 @@ const appointmentRoutes = require('./routes/appointmentRoutes');
 const treatmentRoutes = require('./routes/treatmentRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const documentRoutes = require('./routes/documentRoutes');
+const assistantRoutes = require('./routes/assistantRoutes');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -24,6 +28,8 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/treatments', treatmentRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/assistants', assistantRoutes);
 
 // Setup simple error handler
 app.use((err, req, res, next) => {

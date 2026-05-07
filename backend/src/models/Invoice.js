@@ -23,6 +23,14 @@ const Invoice = sequelize.define('Invoice', {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0.00,
   },
+  estimated_reimbursement: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0.00,
+  },
+  reste_a_charge: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0.00,
+  },
   status: {
     type: DataTypes.ENUM('unpaid', 'partial', 'paid'),
     defaultValue: 'unpaid',

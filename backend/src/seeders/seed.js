@@ -13,19 +13,21 @@ const seedDatabase = async () => {
     const assistantPassword = await bcrypt.hash('assistant123', 10);
     const dentistPassword = await bcrypt.hash('dentist123', 10);
 
-    const assistant = await User.create({ name: 'Assistante', email: 'assistant@clinic.com', password_hash: assistantPassword, role: 'assistant' });
+    const assistant = await User.create({ name: 'Assistante (Principale)', email: 'assistant@clinic.com', password_hash: assistantPassword, role: 'assistant' });
+    const assistant2 = await User.create({ name: 'Imane', email: 'imane@clinic.com', password_hash: assistantPassword, role: 'assistant' });
+    const assistant3 = await User.create({ name: 'Leila', email: 'leila@clinic.com', password_hash: assistantPassword, role: 'assistant' });
     const dentist = await User.create({ name: 'Dentiste', email: 'dentist@clinic.com', password_hash: dentistPassword, role: 'dentist' });
 
     // Create Patients (Arabic/French names)
     const patients = await Patient.bulkCreate([
-      { first_name: 'Ahmed', last_name: 'Benali', email: 'ahmed@mail.com', phone: '0612345678', dob: '1985-05-12', gender: 'Male', address: '12 Rue de Paris', medical_notes: 'Allergic to Penicillin' },
-      { first_name: 'Fatima', last_name: 'Zahra', email: 'fatima@mail.com', phone: '0623456789', dob: '1990-08-22', gender: 'Female', address: '34 Avenue Hassan II', medical_notes: 'Asthma' },
-      { first_name: 'Ali', last_name: 'Haddad', email: 'ali@mail.com', phone: '0634567890', dob: '1975-12-05', gender: 'Male', address: '8 Rue des Fleurs', medical_notes: 'None' },
-      { first_name: 'Yasmine', last_name: 'Chadli', email: 'yasmine@mail.com', phone: '0645678901', dob: '2000-01-30', gender: 'Female', address: '55 Blvd Mohammed V', medical_notes: 'Diabetes Type 2' },
-      { first_name: 'Omar', last_name: 'Rhiwi', email: 'omar@mail.com', phone: '0656789012', dob: '1995-11-15', gender: 'Male', address: '12 Cite Al Amal', medical_notes: 'None' },
-      { first_name: 'Nadia', last_name: 'Boumediene', email: 'nadia@mail.com', phone: '0667890123', dob: '1988-03-18', gender: 'Female', address: '22 Rue Ibn Sina', medical_notes: 'Hypertension' },
-      { first_name: 'Rachid', last_name: 'Amrani', email: 'rachid@mail.com', phone: '0678901234', dob: '1992-07-25', gender: 'Male', address: '15 Avenue Al Massira', medical_notes: 'None' },
-      { first_name: 'Samira', last_name: 'El Fassi', email: 'samira@mail.com', phone: '0689012345', dob: '1983-11-02', gender: 'Female', address: '8 Rue Moulay Ismail', medical_notes: 'Allergic to latex' },
+      { first_name: 'Ahmed', last_name: 'Benali', email: 'ahmed@mail.com', phone: '0612345678', dob: '1985-05-12', gender: 'Male', address: '12 Rue de Paris', medical_notes: 'Allergic to Penicillin', insurance_type: 'CNSS', insurance_id: '123456789' },
+      { first_name: 'Fatima', last_name: 'Zahra', email: 'fatima@mail.com', phone: '0623456789', dob: '1990-08-22', gender: 'Female', address: '34 Avenue Hassan II', medical_notes: 'Asthma', insurance_type: 'AMO', insurance_id: 'AMO-987654' },
+      { first_name: 'Ali', last_name: 'Haddad', email: 'ali@mail.com', phone: '0634567890', dob: '1975-12-05', gender: 'Male', address: '8 Rue des Fleurs', medical_notes: 'None', insurance_type: 'Aucune' },
+      { first_name: 'Yasmine', last_name: 'Chadli', email: 'yasmine@mail.com', phone: '0645678901', dob: '2000-01-30', gender: 'Female', address: '55 Blvd Mohammed V', medical_notes: 'Diabetes Type 2', insurance_type: 'CNSS', insurance_id: '55667788' },
+      { first_name: 'Omar', last_name: 'Rhiwi', email: 'omar@mail.com', phone: '0656789012', dob: '1995-11-15', gender: 'Male', address: '12 Cite Al Amal', medical_notes: 'None', insurance_type: 'Aucune' },
+      { first_name: 'Nadia', last_name: 'Boumediene', email: 'nadia@mail.com', phone: '0667890123', dob: '1988-03-18', gender: 'Female', address: '22 Rue Ibn Sina', medical_notes: 'Hypertension', insurance_type: 'CNSS', insurance_id: '99887766' },
+      { first_name: 'Rachid', last_name: 'Amrani', email: 'rachid@mail.com', phone: '0678901234', dob: '1992-07-25', gender: 'Male', address: '15 Avenue Al Massira', medical_notes: 'None', insurance_type: 'AMO', insurance_id: 'AMO-112233' },
+      { first_name: 'Samira', last_name: 'El Fassi', email: 'samira@mail.com', phone: '0689012345', dob: '1983-11-02', gender: 'Female', address: '8 Rue Moulay Ismail', medical_notes: 'Allergic to latex', insurance_type: 'Aucune' },
     ]);
 
     // Create Appointments across multiple days
@@ -70,11 +72,11 @@ const seedDatabase = async () => {
 
     // Create Invoices
     await Invoice.bulkCreate([
-      { patient_id: patients[3].id, treatment_id: treatments[0].id, amount: 1500.00, paid_amount: 500.00, status: 'partial', due_date: new Date(today.getTime() + 30 * 86400000), issued_date: today },
-      { patient_id: patients[4].id, treatment_id: treatments[1].id, amount: 800.00, paid_amount: 800.00, status: 'paid', due_date: yesterday, issued_date: yesterday },
-      { patient_id: patients[6].id, treatment_id: treatments[2].id, amount: 3500.00, paid_amount: 0.00, status: 'unpaid', due_date: new Date(today.getTime() + 15 * 86400000), issued_date: yesterday },
-      { patient_id: patients[0].id, treatment_id: treatments[3].id, amount: 500.00, paid_amount: 500.00, status: 'paid', due_date: new Date(today.getTime() - 7 * 86400000), issued_date: new Date(today.getTime() - 7 * 86400000) },
-      { patient_id: patients[1].id, treatment_id: treatments[4].id, amount: 1200.00, paid_amount: 600.00, status: 'partial', due_date: new Date(today.getTime() + 7 * 86400000), issued_date: new Date(today.getTime() - 14 * 86400000) },
+      { patient_id: patients[3].id, treatment_id: treatments[0].id, amount: 1500.00, paid_amount: 500.00, estimated_reimbursement: 1050.00, reste_a_charge: 450.00, status: 'partial', due_date: new Date(today.getTime() + 30 * 86400000), issued_date: today },
+      { patient_id: patients[4].id, treatment_id: treatments[1].id, amount: 800.00, paid_amount: 800.00, estimated_reimbursement: 0.00, reste_a_charge: 800.00, status: 'paid', due_date: yesterday, issued_date: yesterday },
+      { patient_id: patients[6].id, treatment_id: treatments[2].id, amount: 3500.00, paid_amount: 0.00, estimated_reimbursement: 2800.00, reste_a_charge: 700.00, status: 'unpaid', due_date: new Date(today.getTime() + 15 * 86400000), issued_date: yesterday },
+      { patient_id: patients[0].id, treatment_id: treatments[3].id, amount: 500.00, paid_amount: 500.00, estimated_reimbursement: 350.00, reste_a_charge: 150.00, status: 'paid', due_date: new Date(today.getTime() - 7 * 86400000), issued_date: new Date(today.getTime() - 7 * 86400000) },
+      { patient_id: patients[1].id, treatment_id: treatments[4].id, amount: 1200.00, paid_amount: 600.00, estimated_reimbursement: 960.00, reste_a_charge: 240.00, status: 'partial', due_date: new Date(today.getTime() + 7 * 86400000), issued_date: new Date(today.getTime() - 14 * 86400000) },
     ]);
 
     console.log('Mock data seeded successfully!');

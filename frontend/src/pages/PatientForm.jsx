@@ -17,7 +17,9 @@ const PatientForm = () => {
     dob: '',
     gender: 'Male',
     address: '',
-    medical_notes: ''
+    medical_notes: '',
+    insurance_type: 'Aucune',
+    insurance_id: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -70,21 +72,21 @@ const PatientForm = () => {
         <button onClick={() => navigate('/patients')} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
           <ArrowLeft className="w-6 h-6 text-slate-600" />
         </button>
-        <h1 className="text-2xl font-bold text-slate-800">{isEdit ? 'Edit Patient' : 'Add New Patient'}</h1>
+        <h1 className="text-2xl font-bold text-slate-800">{isEdit ? 'Modifier le Patient' : 'Nouveau Patient'}</h1>
       </div>
 
       <div className="card p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="label-text">First Name *</label>
+              <label className="label-text">Prénom *</label>
               <input 
                 type="text" name="first_name" required className="input-field" 
                 value={formData.first_name} onChange={handleChange}
               />
             </div>
             <div>
-              <label className="label-text">Last Name *</label>
+              <label className="label-text">Nom *</label>
               <input 
                 type="text" name="last_name" required className="input-field" 
                 value={formData.last_name} onChange={handleChange}
@@ -98,31 +100,50 @@ const PatientForm = () => {
               />
             </div>
             <div>
-              <label className="label-text">Phone</label>
+              <label className="label-text">Téléphone</label>
               <input 
                 type="text" name="phone" className="input-field" 
                 value={formData.phone} onChange={handleChange}
               />
             </div>
             <div>
-              <label className="label-text">Date of Birth</label>
+              <label className="label-text">Date de Naissance</label>
               <input 
                 type="date" name="dob" className="input-field" 
                 value={formData.dob} onChange={handleChange}
               />
             </div>
             <div>
-              <label className="label-text">Gender</label>
+              <label className="label-text">Sexe</label>
               <select name="gender" className="input-field" value={formData.gender} onChange={handleChange}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="Male">Homme</option>
+                <option value="Female">Femme</option>
+                <option value="Other">Autre</option>
               </select>
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+            <div>
+              <label className="label-text">Type d'Assurance</label>
+              <select name="insurance_type" className="input-field" value={formData.insurance_type} onChange={handleChange}>
+                <option value="Aucune">Aucune</option>
+                <option value="CNSS">CNSS</option>
+                <option value="AMO">AMO</option>
+              </select>
+            </div>
+            <div>
+              <label className="label-text">N° d'affiliation / Matricule</label>
+              <input 
+                type="text" name="insurance_id" className="input-field" 
+                placeholder="ex. 123456789"
+                value={formData.insurance_id} onChange={handleChange}
+              />
+            </div>
+          </div>
+
           <div>
-            <label className="label-text">Address</label>
+            <label className="label-text">Adresse</label>
             <input 
               type="text" name="address" className="input-field" 
               value={formData.address} onChange={handleChange}
@@ -130,21 +151,21 @@ const PatientForm = () => {
           </div>
 
           <div>
-            <label className="label-text">Medical Notes</label>
+            <label className="label-text">Notes Médicales</label>
             <textarea 
               name="medical_notes" rows="4" className="input-field" 
               value={formData.medical_notes} onChange={handleChange}
-              placeholder="Allergies, chronic conditions, etc."
+              placeholder="Allergies, conditions chroniques, etc."
             ></textarea>
           </div>
 
           <div className="pt-4 flex justify-end gap-4">
             <button type="button" onClick={() => navigate('/patients')} className="btn-secondary">
-              Cancel
+              Annuler
             </button>
             <button type="submit" disabled={loading} className="btn-primary flex items-center gap-2 px-8">
               <Save size={18} />
-              <span>{loading ? 'Saving...' : 'Save Patient'}</span>
+              <span>{loading ? 'Enregistrement...' : 'Enregistrer le Patient'}</span>
             </button>
           </div>
         </form>

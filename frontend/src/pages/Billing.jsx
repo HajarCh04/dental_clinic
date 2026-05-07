@@ -67,14 +67,24 @@ const Billing = () => {
 
   const handleCreateInvoice = async (e) => {
     e.preventDefault();
+    
+    // Calculate reimbursement
+    const selectedPatient = patients.find(p => p.id === parseInt(createForm.patient_id));
+    const insType = selectedPatient?.insurance_type || 'Aucune';
+    const amount = parseFloat(createForm.amount);
+    const reimbursement = insType === 'CNSS' ? amount * 0.7 : insType === 'AMO' ? amount * 0.8 : 0;
+    const reste = amount - reimbursement;
+
     try {
       await api.post('/invoices', {
         ...createForm,
         paid_amount: 0,
+        estimated_reimbursement: reimbursement,
+        reste_a_charge: reste,
         status: 'unpaid',
         issued_date: new Date().toISOString().split('T')[0]
       });
-      toast.success('Facture créée');
+      toast.success('Facture créée avec succès');
       setShowCreateModal(false);
       setCreateForm(emptyForm);
       fetchInvoices();
@@ -252,6 +262,33 @@ const Billing = () => {
             <label className="label-text">Date d'échéance</label>
             <input type="date" className="input-field" value={createForm.due_date} onChange={(e) => setCreateForm(prev => ({ ...prev, due_date: e.target.value }))} />
           </div>
+
+          {createForm.patient_id && createForm.amount && (
+            <div className="bg-indigo-50 p-4 rounded-xl space-y-2 border border-indigo-100">
+               <p className="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-1">Résumé Assurance</p>
+               <div className="flex justify-between text-sm">
+                 <span className="text-indigo-600">Patient Couvert ({patients.find(p => p.id === parseInt(createForm.patient_id))?.insurance_type})</span>
+                 <span className="font-bold">
+                   {patients.find(p => p.id === parseInt(createForm.patient_id))?.insurance_type === 'CNSS' ? '70%' : 
+                    patients.find(p => p.id === parseInt(createForm.patient_id))?.insurance_type === 'AMO' ? '80%' : '0%'}
+                 </span>
+               </div>
+               <div className="flex justify-between text-sm">
+                 <span className="text-indigo-600">Remboursement estimé</span>
+                 <span className="font-bold text-indigo-800">
+                   {((patients.find(p => p.id === parseInt(createForm.patient_id))?.insurance_type === 'CNSS' ? 0.7 : 
+                     patients.find(p => p.id === parseInt(createForm.patient_id))?.insurance_type === 'AMO' ? 0.8 : 0) * createForm.amount).toLocaleString('fr-FR')} DH
+                 </span>
+               </div>
+               <div className="flex justify-between text-sm pt-1 border-t border-indigo-200">
+                 <span className="font-semibold text-slate-700">Reste à charge patient</span>
+                 <span className="font-bold text-slate-800">
+                   {(createForm.amount - (patients.find(p => p.id === parseInt(createForm.patient_id))?.insurance_type === 'CNSS' ? 0.7 : 
+                     patients.find(p => p.id === parseInt(createForm.patient_id))?.insurance_type === 'AMO' ? 0.8 : 0) * createForm.amount).toLocaleString('fr-FR')} DH
+                 </span>
+               </div>
+            </div>
+          )}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setShowCreateModal(false)} className="btn-secondary">Annuler</button>
             <button type="submit" className="btn-primary px-8">Créer la facture</button>

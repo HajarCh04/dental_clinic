@@ -39,6 +39,14 @@ const Patient = sequelize.define('Patient', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  insurance_type: {
+    type: DataTypes.ENUM('CNSS', 'AMO', 'Aucune'),
+    defaultValue: 'Aucune',
+  },
+  insurance_id: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   timestamps: true,
   createdAt: 'created_at',

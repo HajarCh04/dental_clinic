@@ -58,7 +58,7 @@ export const generatePatientReport = (patient) => {
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(30, 64, 175);
-  doc.text('PERSONAL INFORMATION', 14, y);
+  doc.text('INFORMATIONS PERSONNELLES', 14, y);
   y += 8;
 
   doc.setFont('helvetica', 'normal');
@@ -66,13 +66,15 @@ export const generatePatientReport = (patient) => {
   doc.setFontSize(10);
 
   const info = [
-    ['Full Name', `${patient.first_name} ${patient.last_name}`],
-    ['Patient ID', `PT-${patient.id?.toString().padStart(4, '0')}`],
-    ['Gender', patient.gender || 'N/A'],
-    ['Date of Birth', patient.dob ? new Date(patient.dob).toLocaleDateString() : 'N/A'],
-    ['Phone', patient.phone || 'N/A'],
+    ['Nom Complet', `${patient.first_name} ${patient.last_name}`],
+    ['ID Patient', `PT-${patient.id?.toString().padStart(4, '0')}`],
+    ['Sexe', patient.gender === 'Male' ? 'Homme' : 'Femme'],
+    ['Date de Naissance', patient.dob ? new Date(patient.dob).toLocaleDateString('fr-FR') : 'N/A'],
+    ['Téléphone', patient.phone || 'N/A'],
     ['Email', patient.email || 'N/A'],
-    ['Address', patient.address || 'N/A'],
+    ['Assurance', patient.insurance_type || 'Aucune'],
+    ['Matricule', patient.insurance_id || 'N/A'],
+    ['Adresse', patient.address || 'N/A'],
   ];
 
   info.forEach(([label, value]) => {
@@ -88,13 +90,13 @@ export const generatePatientReport = (patient) => {
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(30, 64, 175);
   doc.setFontSize(11);
-  doc.text('MEDICAL NOTES', 14, y);
+  doc.text('OBSERVATIONS MÉDICALES', 14, y);
   y += 8;
 
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(51, 65, 85);
   doc.setFontSize(9);
-  const notes = patient.medical_notes || 'No medical notes recorded.';
+  const notes = patient.medical_notes || 'Aucune observation enregistrée.';
   const splitNotes = doc.splitTextToSize(notes, 180);
   doc.text(splitNotes, 14, y);
   y += splitNotes.length * 5 + 8;
@@ -104,7 +106,7 @@ export const generatePatientReport = (patient) => {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 64, 175);
     doc.setFontSize(11);
-    doc.text('TREATMENT HISTORY', 14, y);
+    doc.text('HISTORIQUE DES TRAITEMENTS', 14, y);
     y += 4;
 
     autoTable(doc, {
@@ -131,7 +133,7 @@ export const generatePatientReport = (patient) => {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 64, 175);
     doc.setFontSize(11);
-    doc.text('APPOINTMENT HISTORY', 14, y);
+    doc.text('HISTORIQUE DES RENDEZ-VOUS', 14, y);
     y += 4;
 
     autoTable(doc, {
@@ -177,7 +179,7 @@ export const generateInvoicePDF = (invoice) => {
   // Line items table
   autoTable(doc, {
     startY: y,
-    head: [['Description', 'Amount']],
+    head: [['Désignation', 'Montant']],
     body: [
       [invoice.treatment?.procedure_name || 'Acte Dentaire', `${Number(invoice.amount).toLocaleString('fr-FR')} DH`],
     ],
@@ -193,27 +195,35 @@ export const generateInvoicePDF = (invoice) => {
 
   // Summary box
   doc.setFillColor(248, 250, 252);
-  doc.roundedRect(110, y, 86, 40, 2, 2, 'F');
+  doc.roundedRect(110, y, 86, 50, 2, 2, 'F');
 
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 116, 139);
   doc.text('Total:', 115, y + 10);
-  doc.text('Paid:', 115, y + 20);
-  doc.text('Balance:', 115, y + 30);
+  doc.text('Remboursement est. :', 115, y + 18);
+  doc.text('Payé :', 115, y + 26);
+  doc.text('Reste à charge :', 115, y + 36);
 
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(30, 41, 59);
-  doc.text(`${Number(invoice.amount).toLocaleString('fr-FR')} DH`, 190, y + 10, { align: 'right' });
+  doc.text(`${(Number(invoice.amount) || 0).toLocaleString('fr-FR')} DH`, 190, y + 10, { align: 'right' });
+
+  doc.setTextColor(79, 70, 229);
+  doc.text(`${(Number(invoice.estimated_reimbursement) || 0).toLocaleString('fr-FR')} DH`, 190, y + 18, { align: 'right' });
 
   doc.setTextColor(16, 185, 129);
-  doc.text(`${Number(invoice.paid_amount).toLocaleString('fr-FR')} DH`, 190, y + 20, { align: 'right' });
+  doc.text(`${(Number(invoice.paid_amount) || 0).toLocaleString('fr-FR')} DH`, 190, y + 26, { align: 'right' });
 
-  const balance = Number(invoice.amount) - Number(invoice.paid_amount);
-  doc.setTextColor(...(balance > 0 ? [239, 68, 68] : [16, 185, 129]));
-  doc.text(`${balance.toLocaleString('fr-FR')} DH`, 190, y + 30, { align: 'right' });
+  const amountVal = Number(invoice.amount) || 0;
+  const paidVal = Number(invoice.paid_amount) || 0;
+  const reimbVal = Number(invoice.estimated_reimbursement) || 0;
+  const bal = amountVal - (paidVal + reimbVal);
+  const finalBalance = bal > 0 ? bal : 0;
+  doc.setTextColor(...(finalBalance > 0 ? [239, 68, 68] : [16, 185, 129]));
+  doc.text(`${(Number(invoice.reste_a_charge) || finalBalance).toLocaleString('fr-FR')} DH`, 190, y + 36, { align: 'right' });
 
-  y += 50;
+  y += 60;
 
   // Status
   const statusColor = invoice.status === 'paid' ? [16, 185, 129] : invoice.status === 'partial' ? [245, 158, 11] : [239, 68, 68];
