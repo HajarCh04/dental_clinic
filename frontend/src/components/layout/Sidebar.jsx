@@ -22,6 +22,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Traitements', path: '/treatments', icon: <Activity className="w-5 h-5" /> },
   ];
 
+  // Le dentiste voit Mon Équipe
+  if (user?.role === 'dentist') {
+    navItems.push({ name: 'Mon Équipe', path: '/my-team', icon: <Users className="w-5 h-5" /> });
+  }
+
   // Seul l'assistant voit Facturation et Paramètres
   if (user?.role === 'assistant') {
     navItems.push({ name: 'Facturation', path: '/billing', icon: <CreditCard className="w-5 h-5" /> });

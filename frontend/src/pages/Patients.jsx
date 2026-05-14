@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
-import { Search, UserPlus, Eye, Edit, Trash2, Download } from 'lucide-react';
+import { Search, UserPlus, Eye, Edit, Trash2, Download, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { generatePatientsListPDF } from '../utils/pdfGenerator';
 
@@ -67,12 +67,8 @@ const Patients = () => {
             <span>Exporter PDF</span>
           </button>
           {isAssistant && (
-            <button
-              onClick={() => navigate('/patients/new')}
-              className="btn-primary flex items-center gap-2"
-            >
-              <UserPlus size={18} />
-              <span>Ajouter un patient</span>
+            <button onClick={() => navigate('/patients/new')} className="btn-primary flex items-center gap-2 shadow-md">
+              <Plus size={18} /> Nouveau Patient
             </button>
           )}
         </div>
@@ -81,9 +77,9 @@ const Patients = () => {
       <div className="flex gap-4 items-center bg-white p-4 rounded-xl shadow-soft border border-slate-100">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Rechercher par nom, email ou téléphone..."
+          <input 
+            type="text" 
+            placeholder="Rechercher par nom, téléphone ou email..." 
             className="input-field pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -96,17 +92,18 @@ const Patients = () => {
           <table className="w-full text-left">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-600">Nom du patient</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-600">Contact</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-600">Sexe / Naissance</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-600 text-right">Actions</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Patient</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Contact</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Sexe</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Dernière visite</th>
+                <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr><td colSpan="4" className="px-6 py-10 text-center text-slate-500">Chargement des patients...</td></tr>
+                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500">Chargement des patients...</td></tr>
               ) : filteredPatients.length === 0 ? (
-                <tr><td colSpan="4" className="px-6 py-10 text-center text-slate-500">Aucun patient trouvé.</td></tr>
+                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500">Aucun patient trouvé.</td></tr>
               ) : (
                 filteredPatients.map((patient) => (
                   <tr key={patient.id} className="hover:bg-slate-50/50 transition-colors">

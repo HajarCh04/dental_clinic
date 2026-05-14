@@ -12,6 +12,7 @@ import Appointments from './pages/Appointments';
 import Treatments from './pages/Treatments';
 import Billing from './pages/Billing';
 import Settings from './pages/Settings';
+import MyTeam from './pages/MyTeam';
 
 import PrivateRoute from './components/PrivateRoute';
 import RoleDashboard from './components/RoleDashboard';
@@ -46,6 +47,11 @@ function App() {
             <Route path="settings" element={
               <PrivateRoute roles={['assistant']}>
                 <Settings />
+              </PrivateRoute>
+            } />
+            <Route path="my-team" element={
+              <PrivateRoute roles={['dentist']}>
+                <MyTeam />
               </PrivateRoute>
             } />
             

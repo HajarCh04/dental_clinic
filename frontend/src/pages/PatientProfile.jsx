@@ -178,13 +178,13 @@ const PatientProfile = () => {
 
           <div className="card p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-800">Medical Notes</h3>
+              <h3 className="text-lg font-semibold text-slate-800">Notes Médicales</h3>
               {(user?.role === 'dentist' || user?.role === 'admin') && (
-                <button onClick={() => setShowNoteModal(true)} className="text-sm text-primary-600 hover:text-primary-800 font-medium">+ Add Note</button>
+                <button onClick={() => setShowNoteModal(true)} className="text-sm text-primary-600 hover:text-primary-800 font-medium">+ Ajouter une Note</button>
               )}
             </div>
             <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-900 whitespace-pre-wrap">
-              {patient.medical_notes || 'No medical notes recorded.'}
+              {patient.medical_notes || 'Aucune note médicale enregistrée.'}
             </div>
           </div>
         </div>

@@ -34,7 +34,7 @@ const PatientForm = () => {
           if (data.dob) data.dob = data.dob.split('T')[0];
           setFormData(data);
         } catch (error) {
-          toast.error('Failed to load patient data');
+          toast.error('Échec du chargement des données du patient');
           navigate('/patients');
         }
       };
@@ -53,14 +53,14 @@ const PatientForm = () => {
     try {
       if (isEdit) {
         await api.put(`/patients/${id}`, formData);
-        toast.success('Patient updated successfully');
+        toast.success('Patient mis à jour avec succès');
       } else {
         await api.post('/patients', formData);
-        toast.success('Patient created successfully');
+        toast.success('Patient créé avec succès');
       }
       navigate('/patients');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error saving patient');
+      toast.error(error.response?.data?.message || 'Erreur lors de l\'enregistrement du patient');
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,10 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const CLINIC_NAME = 'Advanced Dental Care Center';
-const CLINIC_ADDRESS = '123 Medical Plaza, Suite 200';
-const CLINIC_PHONE = '+1 (555) 234-5678';
-const CLINIC_EMAIL = 'contact@advanceddentalcare.com';
+const CLINIC_NAME = 'Centre Dentaire Avancé';
+const CLINIC_ADDRESS = '123 Medical Plaza, Casablanca';
+const CLINIC_PHONE = '+212 522 34-5678';
+const CLINIC_EMAIL = 'contact@centredentaire.ma';
 
 const addHeader = (doc, title) => {
   // Blue header bar
@@ -39,7 +39,7 @@ const addFooter = (doc) => {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.text(
-      `Generated on ${new Date().toLocaleString()} — ${CLINIC_NAME} — Page ${i} of ${pageCount}`,
+      `Généré le ${new Date().toLocaleString('fr-FR')} — ${CLINIC_NAME} — Page ${i} sur ${pageCount}`,
       105,
       290,
       { align: 'center' }
@@ -52,7 +52,7 @@ const addFooter = (doc) => {
 // ==========================================
 export const generatePatientReport = (patient) => {
   const doc = new jsPDF();
-  let y = addHeader(doc, 'Patient Medical Report');
+  let y = addHeader(doc, 'Rapport Médical du Patient');
 
   // Personal Information
   doc.setFontSize(11);
@@ -111,7 +111,7 @@ export const generatePatientReport = (patient) => {
 
     autoTable(doc, {
       startY: y,
-      head: [['Date', 'Procedure', 'Description', 'Cost']],
+      head: [['Date', 'Acte', 'Description', 'Coût']],
       body: patient.treatments
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .map(t => [
@@ -138,7 +138,7 @@ export const generatePatientReport = (patient) => {
 
     autoTable(doc, {
       startY: y,
-      head: [['Date & Time', 'Title', 'Status']],
+      head: [['Date & Heure', 'Titre', 'Statut']],
       body: patient.appointments
         .sort((a, b) => new Date(b.start_time) - new Date(a.start_time))
         .map(a => [
@@ -153,7 +153,7 @@ export const generatePatientReport = (patient) => {
   }
 
   addFooter(doc);
-  doc.save(`Patient_Report_${patient.first_name}_${patient.last_name}.pdf`);
+  doc.save(`Rapport_Patient_${patient.first_name}_${patient.last_name}.pdf`);
 };
 
 // ==========================================
@@ -161,18 +161,18 @@ export const generatePatientReport = (patient) => {
 // ==========================================
 export const generateInvoicePDF = (invoice) => {
   const doc = new jsPDF();
-  let y = addHeader(doc, 'INVOICE');
+  let y = addHeader(doc, 'FACTURE');
 
   // Invoice details
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(51, 65, 85);
-  doc.text(`Invoice #: ${invoice.id.toString().padStart(5, '0')}`, 14, y);
-  doc.text(`Date: ${new Date(invoice.issued_date).toLocaleDateString()}`, 140, y);
+  doc.text(`Facture #: ${invoice.id.toString().padStart(5, '0')}`, 14, y);
+  doc.text(`Date: ${new Date(invoice.issued_date).toLocaleDateString('fr-FR')}`, 140, y);
   y += 7;
   doc.text(`Patient: ${invoice.patient?.first_name || ''} ${invoice.patient?.last_name || ''}`, 14, y);
   if (invoice.due_date) {
-    doc.text(`Due: ${new Date(invoice.due_date).toLocaleDateString()}`, 140, y);
+    doc.text(`Échéance: ${new Date(invoice.due_date).toLocaleDateString('fr-FR')}`, 140, y);
   }
   y += 12;
 
@@ -235,7 +235,7 @@ export const generateInvoicePDF = (invoice) => {
   doc.text(invoice.status.toUpperCase(), 34, y + 7, { align: 'center' });
 
   addFooter(doc);
-  doc.save(`Invoice_${invoice.id.toString().padStart(5, '0')}.pdf`);
+  doc.save(`Facture_${invoice.id.toString().padStart(5, '0')}.pdf`);
 };
 
 // ==========================================
@@ -243,7 +243,7 @@ export const generateInvoicePDF = (invoice) => {
 // ==========================================
 export const generatePatientsListPDF = (patients) => {
   const doc = new jsPDF();
-  let y = addHeader(doc, 'Patients Directory');
+  let y = addHeader(doc, 'Répertoire des Patients');
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
@@ -253,7 +253,7 @@ export const generatePatientsListPDF = (patients) => {
 
   autoTable(doc, {
     startY: y,
-    head: [['ID', 'Full Name', 'Gender', 'DOB', 'Phone', 'Email']],
+    head: [['ID', 'Nom Complet', 'Sexe', 'Date Naissance', 'Téléphone', 'Email']],
     body: patients.map(p => [
       `PT-${p.id.toString().padStart(4, '0')}`,
       `${p.first_name} ${p.last_name}`,
@@ -276,12 +276,12 @@ export const generatePatientsListPDF = (patients) => {
 // ==========================================
 export const generateRevenueReport = (stats, analytics) => {
   const doc = new jsPDF();
-  let y = addHeader(doc, 'Clinic Financial Report');
+  let y = addHeader(doc, 'Rapport Financier du Cabinet');
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 116, 139);
-  doc.text(`Report Period: All Time`, 14, y);
+  doc.text(`Période du rapport: Tout le temps`, 14, y);
   y += 10;
 
   // Key metrics boxes
@@ -312,7 +312,7 @@ export const generateRevenueReport = (stats, analytics) => {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 64, 175);
     doc.setFontSize(11);
-    doc.text('MONTHLY REVENUE BREAKDOWN', 14, y);
+    doc.text('RÉCAPITULATIF DES REVENUS MENSUELS', 14, y);
     y += 4;
 
     autoTable(doc, {
@@ -333,7 +333,7 @@ export const generateRevenueReport = (stats, analytics) => {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 64, 175);
     doc.setFontSize(11);
-    doc.text('MOST COMMON PROCEDURES', 14, y);
+    doc.text('ACTES LES PLUS FRÉQUENTS', 14, y);
     y += 4;
 
     autoTable(doc, {
@@ -348,5 +348,5 @@ export const generateRevenueReport = (stats, analytics) => {
   }
 
   addFooter(doc);
-  doc.save('Clinic_Financial_Report.pdf');
+  doc.save('Rapport_Financier_Cabinet.pdf');
 };

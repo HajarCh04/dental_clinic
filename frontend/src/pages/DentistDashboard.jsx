@@ -32,7 +32,7 @@ const DentistDashboard = () => {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="animate-pulse text-slate-400">Chargement de votre agenda...</div>
+        <div className="animate-pulse text-slate-400">Chargement de votre tableau de bord...</div>
       </div>
     );
   }
@@ -141,6 +141,11 @@ const DentistDashboard = () => {
                         <MapPin size={10} className="text-teal-500" />
                         <span className="text-[10px] text-teal-600 font-semibold uppercase">Cabinet</span>
                       </div>
+                      <div className="mt-1">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                          appt.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-teal-100 text-teal-700'
+                        }`}>{appt.status === 'completed' ? 'Terminé' : 'En attente'}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -154,39 +159,6 @@ const DentistDashboard = () => {
           </div>
         </div>
 
-        {/* Mon Équipe (Assistantes) */}
-        <div className="card p-6 lg:col-span-2">
-          <div className="flex justify-between items-center mb-5">
-            <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-              <Users className="w-5 h-5 text-indigo-500" />
-              Mon Équipe (Assistantes)
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {assistants.length > 0 ? assistants.map((assistant) => (
-              <div key={assistant.id} className="p-4 rounded-xl border border-slate-100 hover:border-indigo-100 bg-white hover:shadow-sm transition-all flex items-start gap-4 group">
-                <div className="w-12 h-12 rounded-full border-2 border-indigo-100 flex items-center justify-center bg-indigo-50 text-indigo-600 font-bold text-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                  {assistant.name.charAt(0)}
-                </div>
-                <div>
-                  <h4 className="font-semibold text-slate-800">{assistant.name}</h4>
-                  <div className="flex items-center gap-2 text-sm text-slate-500 mt-1">
-                    <Mail size={14} className="text-slate-400" />
-                    <span>{assistant.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-500 mt-1">
-                    <CheckCircle size={14} className="text-emerald-500" />
-                    <span className="text-emerald-600 font-medium text-xs">Accès Système Actif</span>
-                  </div>
-                </div>
-              </div>
-            )) : (
-              <div className="col-span-2 text-center py-8 text-slate-400">
-                <p>Aucune assistante n'est enregistrée dans le système.</p>
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Right Column: Hospital Ops + Recent Treatments */}
         <div className="space-y-6">
@@ -250,7 +222,7 @@ const DentistDashboard = () => {
                       <p className="font-medium text-slate-800 text-sm">{t.procedure_name}</p>
                       <p onClick={() => navigate(`/patients/${t.patient_id}`)} className="text-xs text-primary-600 hover:text-primary-800 cursor-pointer mt-0.5">{t.patient?.first_name} {t.patient?.last_name}</p>
                     </div>
-                    <p className="text-sm font-bold text-teal-600">${Number(t.cost).toLocaleString()}</p>
+                    <p className="text-sm font-bold text-teal-600">{Number(t.cost).toLocaleString()} DH</p>
                   </div>
                 </div>
               )) : (

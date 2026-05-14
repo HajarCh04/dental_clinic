@@ -183,7 +183,7 @@ const Appointments = () => {
               views={['month', 'week', 'day']}
               messages={messages}
               culture="fr"
-              onSelectEvent={isAssistant ? openEditModal : undefined}
+              onSelectEvent={openEditModal}
               date={date}
               onNavigate={newDate => setDate(newDate)}
               view={view}
@@ -193,8 +193,8 @@ const Appointments = () => {
         )}
       </div>
 
-      {/* Modale Création/Modification — Assistant uniquement */}
-      {isAssistant && (
+      {/* Modale Création/Modification */}
+      {showModal && (
         <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingAppt ? 'Modifier le rendez-vous' : 'Nouveau rendez-vous'} size="lg">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

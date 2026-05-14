@@ -36,25 +36,25 @@ const Dashboard = () => {
     return (
       <div className="h-full flex flex-col items-center justify-center space-y-4">
         <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
-        <div className="text-slate-500 font-medium animate-pulse">Loading dashboard elements...</div>
+        <div className="text-slate-500 font-medium animate-pulse">Chargement des éléments du tableau de bord...</div>
       </div>
     );
   }
 
   const handleDownloadReport = () => {
     if (!stats || !analytics) {
-      toast.error('Data not ready yet');
+      toast.error('Les données ne sont pas encore prêtes');
       return;
     }
     generateRevenueReport(stats, analytics);
-    toast.success('Financial report downloaded!');
+    toast.success('Rapport financier téléchargé !');
   };
 
   const statCards = [
     { title: 'Total Patients', value: stats?.totalPatients || 0, icon: <Users className="w-6 h-6" />, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { title: "Today's Appointments", value: stats?.todayAppointments || 0, icon: <Calendar className="w-6 h-6" />, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { title: 'Total Revenue', value: `$${Number(stats?.totalRevenue || 0).toLocaleString()}`, icon: <DollarSign className="w-6 h-6" />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { title: 'Pending Invoices', value: stats?.pendingInvoices || 0, icon: <Clock className="w-6 h-6" />, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { title: "Rendez-vous aujourd'hui", value: stats?.todayAppointments || 0, icon: <Calendar className="w-6 h-6" />, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { title: 'Revenu Total', value: `${Number(stats?.totalRevenue || 0).toLocaleString()} DH`, icon: <DollarSign className="w-6 h-6" />, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+    { title: 'Factures en attente', value: stats?.pendingInvoices || 0, icon: <Clock className="w-6 h-6" />, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
   ];
 
   const COLORS = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
@@ -65,16 +65,16 @@ const Dashboard = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
             <BarChart2 className="text-primary-600" />
-            Clinic Overview Analytics
+            Aperçu Analytique de la Clinique
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Real-time statistics and administrative insights</p>
+          <p className="text-sm text-slate-500 mt-1">Statistiques en temps réel et informations administratives</p>
         </div>
         <div className="flex gap-3">
           <button onClick={handleDownloadReport} className="btn-secondary flex items-center gap-2 shadow-sm">
-            <Download size={16} /> Export Financials
+            <Download size={16} /> Exporter les données financières
           </button>
           <button onClick={() => navigate('/appointments')} className="btn-primary shadow-md hover:shadow-lg transition-shadow">
-            + New Appointment
+            + Nouveau Rendez-vous
           </button>
         </div>
       </div>
@@ -101,9 +101,9 @@ const Dashboard = () => {
         <div className="card p-6 min-h-[350px] flex flex-col">
           <div className="mb-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-purple-500" /> Revenue Trend
+              <DollarSign className="w-5 h-5 text-purple-500" /> Tendance des Revenus
             </h3>
-            <p className="text-xs text-slate-500">Monthly collected payments</p>
+            <p className="text-xs text-slate-500">Paiements mensuels collectés</p>
           </div>
           <div className="flex-1 w-full h-full min-h-[250px]">
             {analytics?.revenueTrend?.length > 0 ? (
@@ -111,12 +111,12 @@ const Dashboard = () => {
                 <BarChart data={analytics.revenueTrend}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748B', fontSize: 12}} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748B', fontSize: 12}} tickFormatter={(value) => `$${value}`} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748B', fontSize: 12}} tickFormatter={(value) => `${value} DH`} />
                   <Tooltip cursor={{fill: '#F1F5F9'}} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
                   <Bar dataKey="revenue" fill="#8b5cf6" radius={[4, 4, 0, 0]} barSize={40} />
                 </BarChart>
               </ResponsiveContainer>
-            ) : <div className="h-full flex items-center justify-center text-slate-400">Not enough data</div>}
+            ) : <div className="h-full flex items-center justify-center text-slate-400">Pas assez de données</div>}
           </div>
         </div>
 
@@ -125,7 +125,7 @@ const Dashboard = () => {
           <div className="card p-6 flex flex-col">
             <div className="mb-4">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-blue-500" /> Patient Growth
+                <TrendingUp className="w-5 h-5 text-blue-500" /> Croissance des Patients
               </h3>
             </div>
             <div className="flex-1 w-full h-full min-h-[200px]">
@@ -138,7 +138,7 @@ const Dashboard = () => {
                     <Line type="monotone" dataKey="patients" stroke="#3b82f6" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
                   </LineChart>
                 </ResponsiveContainer>
-              ) : <div className="h-full flex items-center justify-center text-slate-400">Not enough data</div>}
+              ) : <div className="h-full flex items-center justify-center text-slate-400">Pas assez de données</div>}
             </div>
           </div>
 
@@ -146,7 +146,7 @@ const Dashboard = () => {
           <div className="card p-6 flex flex-col">
             <div className="mb-4">
               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <PieChartIcon className="w-5 h-5 text-amber-500" /> Common Procedures
+                <PieChartIcon className="w-5 h-5 text-amber-500" /> Procédures Courantes
               </h3>
             </div>
             <div className="flex-1 w-full h-full min-h-[200px]">
@@ -161,7 +161,7 @@ const Dashboard = () => {
                     <Tooltip contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <div className="h-full flex items-center justify-center text-slate-400">Not enough data</div>}
+              ) : <div className="h-full flex items-center justify-center text-slate-400">Pas assez de données</div>}
             </div>
             {/* Custom Legend */}
             <div className="mt-2 space-y-1">
@@ -187,10 +187,10 @@ const Dashboard = () => {
         <div className="card p-6 lg:col-span-2 shadow-soft">
           <div className="flex justify-between items-center mb-5 border-b border-slate-100 pb-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-emerald-500" /> Waitlist / Recent Appointments
+              <Activity className="w-5 h-5 text-emerald-500" /> Liste d'attente / Rendez-vous récents
             </h3>
             <button onClick={() => navigate('/appointments')} className="text-sm text-primary-600 hover:text-primary-700 hover:underline flex items-center gap-1 font-medium transition-colors">
-              Full Schedule <ArrowRight size={14} />
+              Planning Complet <ArrowRight size={14} />
             </button>
           </div>
           <div className="space-y-3">
@@ -225,7 +225,7 @@ const Dashboard = () => {
             )) : (
               <div className="text-center py-10">
                 <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                <p className="text-sm text-slate-400 font-medium">No appointments yet</p>
+                <p className="text-sm text-slate-400 font-medium">Aucun rendez-vous pour le moment</p>
               </div>
             )}
           </div>
@@ -235,10 +235,10 @@ const Dashboard = () => {
         <div className="card p-6 shadow-soft">
           <div className="flex justify-between items-center mb-5 border-b border-slate-100 pb-4">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <Users className="w-5 h-5 text-purple-500" /> New Patients
+              <Users className="w-5 h-5 text-purple-500" /> Nouveaux Patients
             </h3>
             <button onClick={() => navigate('/patients')} className="text-sm text-primary-600 hover:text-primary-700 border px-2 py-1 rounded-md text-xs font-semibold hover:bg-primary-50 transition-colors">
-              View All
+              Voir Tout
             </button>
           </div>
           <div className="space-y-3">
@@ -253,12 +253,12 @@ const Dashboard = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-slate-800 text-sm truncate group-hover:text-primary-600 transition-colors">{patient.first_name} {patient.last_name}</p>
-                  <p className="text-xs font-medium text-slate-400 mt-0.5">{patient.phone || patient.email || 'No contact info'}</p>
+                  <p className="text-xs font-medium text-slate-400 mt-0.5">{patient.phone || patient.email || 'Aucune info de contact'}</p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
             )) : (
-              <p className="text-sm text-slate-400 text-center py-8">No patients yet</p>
+              <p className="text-sm text-slate-400 text-center py-8">Aucun patient pour le moment</p>
             )}
           </div>
         </div>
