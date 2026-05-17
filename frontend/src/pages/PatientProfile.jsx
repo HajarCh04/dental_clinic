@@ -302,7 +302,7 @@ const PatientProfile = () => {
                         </div>
                         <div className="flex items-center gap-1">
                           <a 
-                            href={`${import.meta.env.VITE_API_URL}${doc.file_path}`} 
+                            href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${doc.file_path}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"

@@ -95,7 +95,6 @@ const Patients = () => {
                 <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Patient</th>
                 <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Contact</th>
                 <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Sexe</th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Dernière visite</th>
                 <th className="px-6 py-4 text-sm font-semibold text-slate-600 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>

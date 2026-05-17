@@ -4,11 +4,11 @@ const { getInvoices, createInvoice, updateInvoice, deleteInvoice } = require('..
 const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.route('/')
-  .get(protect, authorize('assistant'), getInvoices)
-  .post(protect, authorize('assistant'), createInvoice);
+  .get(protect, authorize('assistant', 'dentist', 'admin'), getInvoices)
+  .post(protect, authorize('assistant', 'dentist', 'admin'), createInvoice);
 
 router.route('/:id')
-  .put(protect, authorize('assistant'), updateInvoice)
-  .delete(protect, authorize('assistant'), deleteInvoice);
+  .put(protect, authorize('assistant', 'dentist', 'admin'), updateInvoice)
+  .delete(protect, authorize('assistant', 'dentist', 'admin'), deleteInvoice);
 
 module.exports = router;

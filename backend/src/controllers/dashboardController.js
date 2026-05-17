@@ -86,6 +86,21 @@ const getAssistantDashboard = async (req, res) => {
       }
     });
 
+    // Unified Hospital stats for assistant
+    const hospitalOpsToday = await Appointment.count({
+      where: {
+        location: 'hospital',
+        start_time: { [Op.gte]: today, [Op.lt]: tomorrow }
+      }
+    });
+
+    const hospitalOpsThisWeek = await Appointment.count({
+      where: {
+        location: 'hospital',
+        start_time: { [Op.gte]: today, [Op.lt]: nextWeek }
+      }
+    });
+
     res.json({
       totalPatients,
       todayAppointments,
@@ -93,7 +108,9 @@ const getAssistantDashboard = async (req, res) => {
       totalRevenue,
       todaySchedule,
       patientSummaries,
-      upcomingCount
+      upcomingCount,
+      hospitalOpsToday,
+      hospitalOpsThisWeek
     });
   } catch (error) {
     console.error(error);
@@ -112,10 +129,9 @@ const getDentistStats = async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Today's office appointments
+    // Today's office appointments (Unified: see all)
     const myTodayAppointments = await Appointment.findAll({
       where: {
-        dentist_id: dentistId,
         start_time: { [Op.gte]: today, [Op.lt]: tomorrow },
         location: 'office'
       },
@@ -125,10 +141,9 @@ const getDentistStats = async (req, res) => {
       order: [['start_time', 'ASC']]
     });
 
-    // Hospital operations (all upcoming, not just today)
+    // Hospital operations (Unified: see all)
     const hospitalOps = await Appointment.findAll({
       where: {
-        dentist_id: dentistId,
         location: 'hospital',
         start_time: { [Op.gte]: today }
       },
@@ -143,28 +158,21 @@ const getDentistStats = async (req, res) => {
     endOfWeek.setDate(endOfWeek.getDate() + 7);
     const hospitalOpsThisWeek = await Appointment.count({
       where: {
-        dentist_id: dentistId,
         location: 'hospital',
         start_time: { [Op.gte]: today, [Op.lt]: endOfWeek }
       }
     });
 
-    const myPatientCount = await Appointment.count({
-      where: { dentist_id: dentistId },
-      distinct: true,
-      col: 'patient_id'
-    });
+    const myPatientCount = await Patient.count(); // Total patients for office
 
     const completedToday = await Appointment.count({
       where: {
-        dentist_id: dentistId,
         status: 'completed',
         start_time: { [Op.gte]: today, [Op.lt]: tomorrow }
       }
     });
 
     const myRecentTreatments = await Treatment.findAll({
-      where: { dentist_id: dentistId },
       include: [
         { model: Patient, as: 'patient', attributes: ['first_name', 'last_name'] }
       ],

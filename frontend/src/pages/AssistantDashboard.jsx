@@ -4,7 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { 
   Users, Calendar, Clock, DollarSign, Search, Eye, 
   ArrowRight, ClipboardList, Activity, UserCheck, AlertCircle,
-  ChevronDown, ChevronUp, X, Download
+  ChevronDown, ChevronUp, X, Download, Building2, MapPin
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -44,6 +44,7 @@ const AssistantDashboard = () => {
   const statCards = [
     { title: 'Total Patients', value: data?.totalPatients || 0, icon: <Users className="w-6 h-6" />, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' },
     { title: "Rendez-vous aujourd'hui", value: data?.todayAppointments || 0, icon: <Calendar className="w-6 h-6" />, color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-200' },
+    { title: 'Op. Hospitalières', value: data?.hospitalOpsToday || 0, icon: <Building2 className="w-6 h-6" />, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200' },
     { title: 'Factures impayées', value: data?.pendingInvoices || 0, icon: <AlertCircle className="w-6 h-6" />, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
     { title: 'À venir (7 jours)', value: data?.upcomingCount || 0, icon: <Clock className="w-6 h-6" />, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200' },
   ];
@@ -71,7 +72,9 @@ const AssistantDashboard = () => {
             <p className="text-indigo-200 text-sm font-medium">{new Date().getHours() < 12 ? 'Bonjour' : new Date().getHours() < 18 ? 'Bon après-midi' : 'Bonsoir'},</p>
             <h1 className="text-2xl font-bold mt-1">{user?.name || 'Assistante'}</h1>
             <p className="text-indigo-200 text-sm mt-2">
-              Vue du cabinet · <span className="font-bold text-white">{data?.todayAppointments || 0}</span> rendez-vous aujourd'hui
+              Vue du cabinet · <span className="font-bold text-white">{data?.todayAppointments || 0}</span> rdv aujourd'hui
+              {data?.hospitalOpsToday > 0 && <> (+ <span className="font-bold text-white">{data.hospitalOpsToday}</span> rdv hôpital)</>}
+              {data?.hospitalOpsThisWeek > 0 && <> · <span className="font-bold text-white">{data.hospitalOpsThisWeek}</span> hôpital cette semaine</>}
             </p>
           </div>
           <div className="flex gap-3">
@@ -86,15 +89,15 @@ const AssistantDashboard = () => {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {statCards.map((stat, index) => (
-          <div key={index} className={`card p-5 flex items-center hover:-translate-y-1 transition-transform duration-300 border-l-4 ${stat.border}`}>
-            <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} mr-4`}>
+          <div key={index} className={`card p-4 flex items-center hover:-translate-y-1 transition-transform duration-300 border-l-4 ${stat.border}`}>
+            <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color} mr-3`}>
               {stat.icon}
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{stat.title}</p>
-              <h3 className="text-2xl font-bold text-slate-800 mt-0.5">{stat.value}</h3>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.title}</p>
+              <h3 className="text-xl font-bold text-slate-800 mt-0.5">{stat.value}</h3>
             </div>
           </div>
         ))}
@@ -139,6 +142,12 @@ const AssistantDashboard = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-xs font-medium text-slate-600">{getTimeString(appt.start_time)} - {getTimeString(appt.end_time)}</p>
+                      <div className="flex items-center gap-1 justify-end mt-1">
+                        {appt.location === 'hospital' ? <Building2 size={10} className="text-rose-500" /> : <MapPin size={10} className="text-indigo-500" />}
+                        <span className={`text-[9px] font-bold uppercase ${appt.location === 'hospital' ? 'text-rose-600' : 'text-indigo-600'}`}>
+                          {appt.location === 'hospital' ? 'Hôpital' : 'Cabinet'}
+                        </span>
+                      </div>
                       <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                         appt.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
                         appt.status === 'cancelled' ? 'bg-red-100 text-red-700' :
